@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { formatTerminalReport, formatSinglePackageTerminal } from '../../../src/reports/terminal.js';
+import {
+  formatTerminalReport,
+  formatSinglePackageTerminal,
+} from '../../../src/reports/terminal.js';
 import { formatJsonReport } from '../../../src/reports/json.js';
 import { formatMarkdownReport } from '../../../src/reports/markdown.js';
 import type { Report, DependencyHealthResult } from '../../../src/core/types.js';

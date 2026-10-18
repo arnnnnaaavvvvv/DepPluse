@@ -45,7 +45,14 @@ describe('Upgrade Risk Evaluator', () => {
       versionsTime: {},
     };
 
-    const assessment = evaluateUpgradeRisk(dummyDep, '3.0.2', '6.0.0-rc.1', targetMeta, 'low', 'low');
+    const assessment = evaluateUpgradeRisk(
+      dummyDep,
+      '3.0.2',
+      '6.0.0-rc.1',
+      targetMeta,
+      'low',
+      'low',
+    );
     expect(assessment.recommendation).toBe('hold');
     expect(assessment.rationale).toContain('unstable prerelease');
   });
@@ -63,7 +70,14 @@ describe('Upgrade Risk Evaluator', () => {
       versionsTime: {},
     };
 
-    const assessment = evaluateUpgradeRisk(dummyDep, '1.0.0', '2.0.0', targetMeta, 'low', 'critical');
+    const assessment = evaluateUpgradeRisk(
+      dummyDep,
+      '1.0.0',
+      '2.0.0',
+      targetMeta,
+      'low',
+      'critical',
+    );
     expect(assessment.recommendation).toBe('hold');
     expect(assessment.rationale).toContain('deprecated');
   });

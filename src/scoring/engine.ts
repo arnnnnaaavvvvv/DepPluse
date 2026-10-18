@@ -32,10 +32,7 @@ export function scoreDependencyHealth(
   const compat = analyzeEngineCompatibility(packageMeta);
   const conf = computeConfidence(packageMeta, repoMeta, minConfidenceThreshold);
 
-  const evidence: HealthEvidence[] = [
-    ...cadence.evidence,
-    ...compat.evidence,
-  ];
+  const evidence: HealthEvidence[] = [...cadence.evidence, ...compat.evidence];
 
   // 1. Deprecation Check (Fatal Cap)
   if (packageMeta.isDeprecated) {
@@ -72,12 +69,17 @@ export function scoreDependencyHealth(
       observedValue: { associationStatus: 'divergent' },
       source: 'github',
       observedAt: new Date().toISOString(),
-      explanation: repoMeta.unverifiedReason ?? 'Claimed repository diverges from package identity.',
+      explanation:
+        repoMeta.unverifiedReason ?? 'Claimed repository diverges from package identity.',
       contribution: -20,
       isFatalCap: true,
       fatalCapValue: 30,
     });
-  } else if (!repoMeta.isArchived && repoMeta.associationStatus === 'verified' && repoMeta.stars > 100) {
+  } else if (
+    !repoMeta.isArchived &&
+    repoMeta.associationStatus === 'verified' &&
+    repoMeta.stars > 100
+  ) {
     evidence.push({
       signal: 'repo_provenance',
       observedValue: { associationStatus: 'verified', stars: repoMeta.stars },
@@ -107,7 +109,8 @@ export function scoreDependencyHealth(
       observedValue: { confidence: conf.confidence },
       source: 'lockfile',
       observedAt: new Date().toISOString(),
-      explanation: 'Insufficient public telemetry to reliably score maintenance health without speculation.',
+      explanation:
+        'Insufficient public telemetry to reliably score maintenance health without speculation.',
       contribution: 0,
     });
 

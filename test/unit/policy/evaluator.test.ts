@@ -3,7 +3,12 @@ import { evaluatePolicy } from '../../../src/policy/evaluator.js';
 import type { DependencyHealthResult, PolicyRule } from '../../../src/core/types.js';
 
 describe('Policy Evaluator', () => {
-  const makeHealthResult = (name: string, version: string, risk: 'low' | 'medium' | 'high' | 'critical' | 'unknown', score: number | null): DependencyHealthResult => ({
+  const makeHealthResult = (
+    name: string,
+    version: string,
+    risk: 'low' | 'medium' | 'high' | 'critical' | 'unknown',
+    score: number | null,
+  ): DependencyHealthResult => ({
     dependency: {
       id: `${name}@${version}`,
       name,
@@ -42,9 +47,7 @@ describe('Policy Evaluator', () => {
   });
 
   it('fails with violation when a dependency breaches failOnRisk', () => {
-    const results = [
-      makeHealthResult('request', '2.88.2', 'critical', 15),
-    ];
+    const results = [makeHealthResult('request', '2.88.2', 'critical', 15)];
     const policy: PolicyRule = {
       failOnRisk: ['critical'],
       maxHighRiskAllowed: 0,
@@ -59,9 +62,7 @@ describe('Policy Evaluator', () => {
   });
 
   it('permits violations if package is in allowList with documented reason', () => {
-    const results = [
-      makeHealthResult('legacy-pkg', '1.0.0', 'critical', 10),
-    ];
+    const results = [makeHealthResult('legacy-pkg', '1.0.0', 'critical', 10)];
     const policy: PolicyRule = {
       failOnRisk: ['critical'],
       maxHighRiskAllowed: 0,
@@ -81,9 +82,7 @@ describe('Policy Evaluator', () => {
   });
 
   it('rejects exception if allowList entry has expired', () => {
-    const results = [
-      makeHealthResult('legacy-pkg', '1.0.0', 'critical', 10),
-    ];
+    const results = [makeHealthResult('legacy-pkg', '1.0.0', 'critical', 10)];
     const pastDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(); // yesterday
     const policy: PolicyRule = {
       failOnRisk: ['critical'],

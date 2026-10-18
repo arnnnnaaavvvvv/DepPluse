@@ -10,20 +10,21 @@ Honesty about technical capabilities and non-goals is a core design principle of
 
 ## 2. Lockfile Coverage Matrix
 
-| Lockfile Format | Current Support Level | Behavior |
-| :--- | :--- | :--- |
-| `package-lock.json` (v2, v3) | **Full Support** | Complete direct and transitive dependency graph resolution. |
-| `npm-shrinkwrap.json` | **Full Support** | Complete direct and transitive dependency resolution. |
-| `package-lock.json` (v1) | **Full Support** | Recursive dependency resolution. |
-| `pnpm-lock.yaml` (v5, v6, v9) | **Partial Support** | Extracts packages; full virtual-store resolution is scheduled for v1.1. |
-| `yarn.lock` (v1, v2+) | **Direct-Only Support** | Emits explicit warning; analyzes direct dependencies from `package.json`. Full AST parser scheduled for v1.1. |
-| No lockfile found | **Direct-Only Support** | Analyzes declared ranges from `package.json`. |
+| Lockfile Format               | Current Support Level   | Behavior                                                                                                      |
+| :---------------------------- | :---------------------- | :------------------------------------------------------------------------------------------------------------ |
+| `package-lock.json` (v2, v3)  | **Full Support**        | Complete direct and transitive dependency graph resolution.                                                   |
+| `npm-shrinkwrap.json`         | **Full Support**        | Complete direct and transitive dependency resolution.                                                         |
+| `package-lock.json` (v1)      | **Full Support**        | Recursive dependency resolution.                                                                              |
+| `pnpm-lock.yaml` (v5, v6, v9) | **Partial Support**     | Extracts packages; full virtual-store resolution is scheduled for v1.1.                                       |
+| `yarn.lock` (v1, v2+)         | **Direct-Only Support** | Emits explicit warning; analyzes direct dependencies from `package.json`. Full AST parser scheduled for v1.1. |
+| No lockfile found             | **Direct-Only Support** | Analyzes declared ranges from `package.json`.                                                                 |
 
 DepPulse **never silently ignores** unsupported formats or guesses resolutions. It reports explicit partial coverage with actionable recovery hints.
 
 ## 3. Read-Only Safety Guarantees
 
 DepPulse is strictly read-only:
+
 - **No Package Lifecycle Scripts**: Does not run `preinstall`, `postinstall`, or any npm lifecycle scripts.
 - **No File Mutation**: Does not alter `package.json`, lockfiles, or code files during scans.
 - **No Automatic Installation**: Does not execute `npm install` or invoke package manager executables.

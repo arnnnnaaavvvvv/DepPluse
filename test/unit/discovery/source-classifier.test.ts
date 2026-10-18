@@ -15,7 +15,9 @@ describe('Dependency Source Classifier', () => {
   it('identifies workspace specifiers and local packages', () => {
     expect(classifyDependencySource('workspace:*')).toBe('workspace');
     expect(classifyDependencySource('workspace:^2.0.0')).toBe('workspace');
-    expect(classifyDependencySource('my-internal-lib', new Set(['my-internal-lib']))).toBe('workspace');
+    expect(classifyDependencySource('my-internal-lib', new Set(['my-internal-lib']))).toBe(
+      'workspace',
+    );
   });
 
   it('identifies git and repo URLs', () => {

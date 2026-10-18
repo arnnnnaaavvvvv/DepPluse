@@ -48,7 +48,8 @@ export async function discoverDependencies(
         name: declared.name,
         declaredRange: declared.range,
         reason: 'private_workspace',
-        explanation: 'Local workspace package; internal source code is not published to public npm.',
+        explanation:
+          'Local workspace package; internal source code is not published to public npm.',
       });
       continue;
     }
@@ -134,11 +135,13 @@ export async function discoverDependencies(
     }
   }
 
-  const coverage = lockfile ? lockfile.coverage : 'direct-only';
+  const coverage = lockfile && includeTransitive ? lockfile.coverage : 'direct-only';
   if (!lockfile) {
     warnings.push(
       'No lockfile (package-lock.json, pnpm-lock.yaml, yarn.lock) found. Running in direct-only coverage mode.',
     );
+  } else if (!includeTransitive) {
+    warnings.push('Transitive scanning disabled. Running in direct-only coverage mode.');
   }
 
   return {

@@ -1,6 +1,6 @@
 {
   "name": "@arnavvv/deppulse",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Dependency health and upgrade intelligence CLI and engine for Node.js",
   "keywords": [
     "dependency",

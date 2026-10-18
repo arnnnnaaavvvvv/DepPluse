@@ -133,7 +133,11 @@ export async function runBenchmarkForSize(count: number): Promise<BenchmarkMetri
   const networkRequestsWarm = networkCalls;
   const warmCacheHitRate =
     warmReport.scannedDependenciesCount > 0
-      ? Math.round(((warmReport.scannedDependenciesCount - networkCalls) / warmReport.scannedDependenciesCount) * 100)
+      ? Math.round(
+          ((warmReport.scannedDependenciesCount - networkCalls) /
+            warmReport.scannedDependenciesCount) *
+            100,
+        )
       : 100;
 
   // 3. Simulated Network Outage Test (10% random network dropout)

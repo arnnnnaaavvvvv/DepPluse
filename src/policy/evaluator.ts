@@ -98,7 +98,9 @@ export function evaluatePolicy(
   }
 
   // Deterministically sort violations and exceptions
-  violations.sort((a, b) => a.dependencyId.localeCompare(b.dependencyId) || a.rule.localeCompare(b.rule));
+  violations.sort(
+    (a, b) => a.dependencyId.localeCompare(b.dependencyId) || a.rule.localeCompare(b.rule),
+  );
   allowedExceptions.sort();
 
   return {

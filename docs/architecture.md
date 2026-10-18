@@ -5,6 +5,7 @@
 `deppulse` is a developer-tooling CLI and TypeScript engine providing dependency health telemetry and upgrade intelligence for Node.js projects.
 
 ### System Boundaries & Non-Goals
+
 - **In Scope**: Third-party package health, maintenance velocity, deprecation risk, repository archive status, Node.js engine compatibility, package maturity calibration, and upgrade path risk assessment.
 - **Strictly Out of Scope**:
   - Source-code scanning, AST inspection, secret detection (reserved for MEJOR / `arnav-audit`).
@@ -287,7 +288,7 @@ export interface RepoProvider {
   getRepoMetadata(
     declaredRepoUrl: string,
     expectedPackageName: string,
-    options?: RequestOptions
+    options?: RequestOptions,
   ): Promise<RepoMetadata>;
 }
 
@@ -295,12 +296,13 @@ export interface AdvisoryProvider {
   getAdvisories(
     packageName: string,
     version: string,
-    options?: RequestOptions
+    options?: RequestOptions,
   ): Promise<readonly { id: string; title: string; severity: string; url: string }[]>;
 }
 ```
 
 ### Security & Operational Guardrails:
+
 1. **SSRF Guard & Protocol Whitelist**:
    - Only `https:` protocols are accepted.
    - Hostname whitelist: `registry.npmjs.org`, `registry.yarnpkg.com`, `api.github.com`.
@@ -338,7 +340,10 @@ export abstract class DepPulseError extends Error {
   abstract readonly exitCode: 0 | 1 | 2;
   readonly timestamp: string = new Date().toISOString();
 
-  constructor(message: string, public readonly recoveryHint?: string) {
+  constructor(
+    message: string,
+    public readonly recoveryHint?: string,
+  ) {
     super(message);
     Object.setPrototypeOf(this, new.target.prototype);
   }
@@ -386,31 +391,43 @@ import { z } from 'zod';
 
 export const ConfigSchema = z.object({
   version: z.literal(1),
-  scoring: z.object({
-    minConfidenceThreshold: z.number().min(0).max(1).default(0.35),
-    maturityThresholdYears: z.number().min(1).default(4),
-  }).default({}),
-  policy: z.object({
-    failOnRisk: z.array(z.enum(['low', 'medium', 'high', 'critical', 'unknown'])).default(['critical']),
-    maxHighRiskAllowed: z.number().int().min(0).default(0),
-    allowList: z.array(
-      z.object({
-        name: z.string().min(1),
-        versionRange: z.string().default('*'),
-        reason: z.string().min(5, 'Reason must be documented for exceptions'),
-        expiresAt: z.string().datetime().optional(),
-      })
-    ).default([]),
-  }).default({}),
-  network: z.object({
-    concurrency: z.number().int().min(1).max(32).default(8),
-    timeoutMs: z.number().int().min(1000).max(30000).default(8000),
-    allowedRegistries: z.array(z.string().url()).default(['https://registry.npmjs.org']),
-  }).default({}),
-  cache: z.object({
-    enabled: z.boolean().default(true),
-    dir: z.string().optional(),
-  }).default({}),
+  scoring: z
+    .object({
+      minConfidenceThreshold: z.number().min(0).max(1).default(0.35),
+      maturityThresholdYears: z.number().min(1).default(4),
+    })
+    .default({}),
+  policy: z
+    .object({
+      failOnRisk: z
+        .array(z.enum(['low', 'medium', 'high', 'critical', 'unknown']))
+        .default(['critical']),
+      maxHighRiskAllowed: z.number().int().min(0).default(0),
+      allowList: z
+        .array(
+          z.object({
+            name: z.string().min(1),
+            versionRange: z.string().default('*'),
+            reason: z.string().min(5, 'Reason must be documented for exceptions'),
+            expiresAt: z.string().datetime().optional(),
+          }),
+        )
+        .default([]),
+    })
+    .default({}),
+  network: z
+    .object({
+      concurrency: z.number().int().min(1).max(32).default(8),
+      timeoutMs: z.number().int().min(1000).max(30000).default(8000),
+      allowedRegistries: z.array(z.string().url()).default(['https://registry.npmjs.org']),
+    })
+    .default({}),
+  cache: z
+    .object({
+      enabled: z.boolean().default(true),
+      dir: z.string().optional(),
+    })
+    .default({}),
 });
 
 export type DepPulseConfig = z.infer<typeof ConfigSchema>;

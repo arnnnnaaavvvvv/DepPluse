@@ -33,10 +33,7 @@ If no configuration file is present, safe defaults are automatically applied.
     "concurrency": 8,
     "timeoutMs": 8000,
     "maxRetries": 3,
-    "allowedRegistries": [
-      "https://registry.npmjs.org",
-      "https://npm.pkg.github.com"
-    ]
+    "allowedRegistries": ["https://registry.npmjs.org", "https://npm.pkg.github.com"]
   },
   "cache": {
     "enabled": true,
@@ -51,14 +48,17 @@ If no configuration file is present, safe defaults are automatically applied.
 ## Schema Reference
 
 ### `version` (required)
+
 - **Type**: `number` (Literal `1`)
 - **Description**: Schema version. Currently only version `1` is supported.
 
 ### `scoring` (optional)
+
 - `minConfidenceThreshold` (number, default: `0.35`): Minimum telemetry completeness score (0.0 to 1.0) required to assign a numeric health score. Telemetry below this threshold yields `score: null` and `maintenanceRisk: "unknown"`. Missing data is never penalized as poor health.
 - `maturityThresholdYears` (number, default: `4`): Package age in years after which a package with multiple releases is evaluated under the **Mature-Stable** model (waiving naive release recency penalties for completed libraries).
 
 ### `policy` (optional)
+
 - `failOnRisk` (array of strings, default: `["critical"]`): Maintenance risk tiers that fail the CI build with exit code 1. Options: `"low"`, `"medium"`, `"high"`, `"critical"`, `"unknown"`.
 - `maxHighRiskAllowed` (number, default: `0`): Maximum allowable number of dependencies in the `high` risk category before failing policy.
 - `minScore` (number, optional): Minimum required health score (0–100) for every scanned package.
@@ -70,12 +70,14 @@ If no configuration file is present, safe defaults are automatically applied.
   - `expiresAt` (ISO-8601 string, optional): Date after which the exception automatically expires.
 
 ### `network` (optional)
+
 - `concurrency` (number, default: `8`, max: `32`): Maximum simultaneous outbound HTTP requests.
 - `timeoutMs` (number, default: `8000`): Request timeout in milliseconds via `AbortSignal`.
 - `maxRetries` (number, default: `3`): Number of exponential backoff retry attempts on 5xx server errors.
 - `allowedRegistries` (array of URLs, default: `["https://registry.npmjs.org"]`): Whitelist of trusted registry origins for SSRF protection.
 
 ### `cache` (optional)
+
 - `enabled` (boolean, default: `true`): Whether local disk caching is active. Can be bypassed on individual runs with `--no-cache`.
 - `dir` (string, default: `".deppulse/cache"`): Filesystem directory where cached responses are stored.
 - `ttlHours` (number, default: `24`): Cache time-to-live in hours.

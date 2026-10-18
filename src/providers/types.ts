@@ -13,7 +13,11 @@ export interface CacheStore {
 }
 
 export interface NpmRegistryProvider {
-  getPackageMeta(packageName: string, targetVersion?: string, options?: RequestOptions): Promise<PackageMetadata>;
+  getPackageMeta(
+    packageName: string,
+    targetVersion?: string,
+    options?: RequestOptions,
+  ): Promise<PackageMetadata>;
 }
 
 export interface RepoProvider {

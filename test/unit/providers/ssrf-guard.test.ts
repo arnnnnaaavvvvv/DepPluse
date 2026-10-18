@@ -21,7 +21,9 @@ describe('SSRF Guard and URL Security Validator', () => {
   it('blocks private, loopback, and cloud metadata IP addresses', () => {
     expect(() => validateSafeUrl('https://127.0.0.1/malicious')).toThrow(SSRFProtectionError);
     expect(() => validateSafeUrl('https://localhost:8080/data')).toThrow(SSRFProtectionError);
-    expect(() => validateSafeUrl('https://169.254.169.254/latest/meta-data')).toThrow(SSRFProtectionError);
+    expect(() => validateSafeUrl('https://169.254.169.254/latest/meta-data')).toThrow(
+      SSRFProtectionError,
+    );
     expect(() => validateSafeUrl('https://10.0.0.5/api')).toThrow(SSRFProtectionError);
     expect(() => validateSafeUrl('https://192.168.1.1/admin')).toThrow(SSRFProtectionError);
   });

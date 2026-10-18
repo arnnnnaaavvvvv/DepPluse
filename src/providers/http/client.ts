@@ -10,9 +10,10 @@ export interface HttpClientOptions {
   timeoutMs?: number | undefined;
   maxRetries?: number | undefined;
   allowedRegistries?: readonly string[] | undefined;
+  maxResponseBytes?: number | undefined;
 }
 
-const MAX_RESPONSE_BYTES = 10 * 1024 * 1024; // 10 MB
+const DEFAULT_MAX_RESPONSE_BYTES = 64 * 1024 * 1024; // 64 MB (supports large packuments like typescript, @types/node)
 const MAX_REDIRECTS = 3;
 
 /**
@@ -31,6 +32,7 @@ export class ResilientHttpClient {
   private readonly timeoutMs: number;
   private readonly maxRetries: number;
   private readonly allowedRegistries: readonly string[];
+  private readonly maxResponseBytes: number;
 
   private activeRequests = 0;
   private readonly queue: Array<() => void> = [];
@@ -41,6 +43,7 @@ export class ResilientHttpClient {
     this.timeoutMs = options.timeoutMs ?? 8000;
     this.maxRetries = options.maxRetries ?? 3;
     this.allowedRegistries = options.allowedRegistries ?? ['https://registry.npmjs.org'];
+    this.maxResponseBytes = options.maxResponseBytes ?? DEFAULT_MAX_RESPONSE_BYTES;
   }
 
   private async acquireSlot(): Promise<void> {
@@ -90,9 +93,47 @@ export class ResilientHttpClient {
     return promise;
   }
 
+  async postJson<T>(
+    url: string,
+    body: unknown,
+    options: {
+      headers?: Record<string, string> | undefined;
+      signal?: AbortSignal | undefined;
+      timeoutMs?: number | undefined;
+    } = {},
+  ): Promise<T> {
+    // 1. Initial URL validation with SSRF Guard
+    validateSafeUrl(url, this.allowedRegistries);
+
+    // 2. In-flight Request Deduplication
+    const serializedBody = typeof body === 'string' ? body : JSON.stringify(body);
+    const dedupKey = `POST:${url}:${serializedBody}`;
+    const existing = this.inFlight.get(dedupKey);
+    if (existing) {
+      return existing as Promise<T>;
+    }
+
+    const promise = this.executeWithRetry<T>(url, {
+      ...options,
+      method: 'POST',
+      body: serializedBody,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    }).finally(() => {
+      this.inFlight.delete(dedupKey);
+    });
+
+    this.inFlight.set(dedupKey, promise);
+    return promise;
+  }
+
   private async executeWithRetry<T>(
     initialUrl: string,
     options: {
+      method?: string | undefined;
+      body?: string | undefined;
       headers?: Record<string, string> | undefined;
       signal?: AbortSignal | undefined;
       timeoutMs?: number | undefined;
@@ -124,16 +165,22 @@ export class ResilientHttpClient {
 
         // Manual redirect following loop to prevent redirect-based SSRF
         while (redirectCount <= MAX_REDIRECTS) {
-          response = await fetch(currentUrl, {
-            method: 'GET',
-            headers: {
-              Accept: 'application/json',
-              'User-Agent': 'deppulse/0.1.0 (Dependency Health & Upgrade Intelligence)',
-              ...options.headers,
-            },
+          const reqHeaders: Record<string, string> = {
+            Accept: 'application/json',
+            'User-Agent': 'deppulse/0.1.1 (Dependency Health & Upgrade Intelligence)',
+            ...options.headers,
+          };
+          const reqInit: RequestInit = {
+            method: options.method ?? 'GET',
+            headers: reqHeaders,
             redirect: 'manual',
             signal: controller.signal,
-          });
+          };
+          if (options.body !== undefined) {
+            reqInit.body = options.body;
+          }
+
+          response = await fetch(currentUrl, reqInit);
 
           // Check if redirect
           if (response.status >= 300 && response.status < 400) {
@@ -207,7 +254,8 @@ export class ResilientHttpClient {
         if (response.status >= 500) {
           if (attempt < this.maxRetries) {
             attempt++;
-            const backoff = Math.min(4000, 500 * Math.pow(2, attempt)) * (0.5 + Math.random() * 0.5);
+            const backoff =
+              Math.min(4000, 500 * Math.pow(2, attempt)) * (0.5 + Math.random() * 0.5);
             await new Promise(r => setTimeout(r, backoff));
             continue;
           }
@@ -228,9 +276,9 @@ export class ResilientHttpClient {
 
         // Bounded response size check (handles both content-length and streaming chunks)
         const contentLength = response.headers.get('content-length');
-        if (contentLength && Number(contentLength) > MAX_RESPONSE_BYTES) {
+        if (contentLength && Number(contentLength) > this.maxResponseBytes) {
           throw new ProviderNetworkError(
-            `Response size ${contentLength} bytes exceeds safety limit of ${MAX_RESPONSE_BYTES} bytes.`,
+            `Response size ${contentLength} bytes exceeds safety limit of ${this.maxResponseBytes} bytes.`,
             'The packument or repository payload is excessively large.',
             { url: sanitizeUrl(currentUrl), size: contentLength },
           );
@@ -247,10 +295,10 @@ export class ResilientHttpClient {
             if (done) break;
             if (value) {
               totalBytes += value.byteLength;
-              if (totalBytes > MAX_RESPONSE_BYTES) {
+              if (totalBytes > this.maxResponseBytes) {
                 await reader.cancel();
                 throw new ProviderNetworkError(
-                  `Response exceeded maximum allowed size of ${MAX_RESPONSE_BYTES} bytes.`,
+                  `Response exceeded maximum allowed size of ${this.maxResponseBytes} bytes.`,
                   'Payload rejected due to size limit safety policy.',
                   { url: sanitizeUrl(currentUrl), bytesReceived: totalBytes },
                 );
@@ -314,6 +362,8 @@ export class ResilientHttpClient {
       }
     }
 
-    throw new ProviderNetworkError(`Failed to fetch ${sanitizeUrl(initialUrl)} after ${this.maxRetries} retries.`);
+    throw new ProviderNetworkError(
+      `Failed to fetch ${sanitizeUrl(initialUrl)} after ${this.maxRetries} retries.`,
+    );
   }
 }

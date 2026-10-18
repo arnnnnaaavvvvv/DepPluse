@@ -3,7 +3,10 @@ import path from 'node:path';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import { parseNpmLockfile } from '../../../src/discovery/lockfiles/npm.js';
-import { parsePnpmLockfile, parseYarnLockfile } from '../../../src/discovery/lockfiles/pnpm-yarn.js';
+import {
+  parsePnpmLockfile,
+  parseYarnLockfile,
+} from '../../../src/discovery/lockfiles/pnpm-yarn.js';
 import { discoverDependencies } from '../../../src/discovery/index.js';
 
 describe('Lockfile Parsers and Discovery Orchestrator', () => {
@@ -30,7 +33,7 @@ describe('Lockfile Parsers and Discovery Orchestrator', () => {
         'node_modules/express': {
           version: '4.19.2',
           dependencies: {
-            'accepts': '~1.3.8',
+            accepts: '~1.3.8',
           },
         },
         'node_modules/accepts': {

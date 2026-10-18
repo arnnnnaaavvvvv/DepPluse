@@ -12,13 +12,20 @@ export function createProgram(): Command {
   program
     .name('deppulse')
     .description('Dependency health and upgrade intelligence CLI for Node.js')
-    .version('0.1.0');
+    .version('0.1.1');
 
   program
     .command('scan [path]')
-    .description('Scan project dependencies, evaluate maintenance risk, and enforce health policies')
+    .description(
+      'Scan project dependencies, evaluate maintenance risk, and enforce health policies',
+    )
     .option('-f, --format <format>', 'Output format: terminal, json, markdown', 'terminal')
     .option('--fail-on <risk>', 'Fail build on risk level: low, medium, high, critical, unknown')
+    .option(
+      '-d, --direct, --direct-only',
+      'Scan only direct dependencies (ignore transitive lockfile entries)',
+      false,
+    )
     .option('--no-cache', 'Bypass local response cache')
     .option('-o, --output <file>', 'Save output report to file')
     .option('-c, --config <file>', 'Path to custom configuration file')

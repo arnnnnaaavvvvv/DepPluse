@@ -55,7 +55,8 @@ describe('Deterministic Scoring Engine v1', () => {
       publishedAt: '2020-02-11T00:00:00.000Z',
       releaseCount: 150,
       isDeprecated: true,
-      deprecationReason: 'request has been deprecated, see https://github.com/request/request/issues/3142',
+      deprecationReason:
+        'request has been deprecated, see https://github.com/request/request/issues/3142',
       hasProvenance: false,
       versionsTime: { '2.88.2': '2020-02-11T00:00:00.000Z' },
     };
@@ -118,7 +119,8 @@ describe('Deterministic Scoring Engine v1', () => {
       owner: 'facebook',
       repo: 'react',
       associationStatus: 'divergent',
-      unverifiedReason: 'Package malicious-spoof claims monorepo facebook/react without verified provenance.',
+      unverifiedReason:
+        'Package malicious-spoof claims monorepo facebook/react without verified provenance.',
       isArchived: false,
       isFork: false,
       defaultBranch: 'main',

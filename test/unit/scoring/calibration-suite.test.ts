@@ -233,11 +233,7 @@ describe('Scoring Calibration Golden Suite (12 Archetypes)', () => {
   });
 
   it('Archetype 8: Determinism under Shuffled Input Order', () => {
-    const deps = [
-      makeDep('a-lib', '1.0.0'),
-      makeDep('m-lib', '2.0.0'),
-      makeDep('z-lib', '3.0.0'),
-    ];
+    const deps = [makeDep('a-lib', '1.0.0'), makeDep('m-lib', '2.0.0'), makeDep('z-lib', '3.0.0')];
 
     const mockMeta: PackageMetadata = {
       name: 'pkg',

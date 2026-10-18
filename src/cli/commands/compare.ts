@@ -14,7 +14,9 @@ export async function handleCompareCommand(
   options: CompareCliOptions = {},
 ): Promise<number> {
   if (!pkgName) {
-    throw new UsageError('Missing package argument. Usage: deppulse compare <pkg> --from <v1> --to <v2>');
+    throw new UsageError(
+      'Missing package argument. Usage: deppulse compare <pkg> --from <v1> --to <v2>',
+    );
   }
   if (!options.from) {
     throw new UsageError('Missing --from flag. Specify starting version.');
@@ -33,7 +35,11 @@ export async function handleCompareCommand(
     // eslint-disable-next-line no-console
     console.log('');
     // eslint-disable-next-line no-console
-    console.log(pc.bold(pc.cyan('DepPulse Upgrade Comparison: ') + `${pkgName} (${options.from} → ${options.to})`));
+    console.log(
+      pc.bold(
+        pc.cyan('DepPulse Upgrade Comparison: ') + `${pkgName} (${options.from} → ${options.to})`,
+      ),
+    );
     // eslint-disable-next-line no-console
     console.log(pc.dim('─'.repeat(60)));
     // eslint-disable-next-line no-console

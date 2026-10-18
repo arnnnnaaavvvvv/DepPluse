@@ -16,7 +16,12 @@ import { ResilientHttpClient } from '../providers/http/client.js';
 import { DefaultNpmRegistryProvider } from '../providers/npm/registry.js';
 import { DefaultGitHubProvider } from '../providers/github/client.js';
 import { DefaultAdvisoryProvider } from '../providers/advisory/contextual.js';
-import type { AdvisoryProvider, CacheStore, NpmRegistryProvider, RepoProvider } from '../providers/types.js';
+import type {
+  AdvisoryProvider,
+  CacheStore,
+  NpmRegistryProvider,
+  RepoProvider,
+} from '../providers/types.js';
 import { scoreDependencyHealth } from '../scoring/engine.js';
 import { evaluateUpgradeRisk } from '../analysis/upgrade.js';
 import { evaluatePolicy } from '../policy/evaluator.js';
@@ -52,13 +57,20 @@ export class DepPulseEngine {
       allowedRegistries: this.config.network.allowedRegistries,
     });
 
-    this.npmProvider = deps.npmProvider ?? new DefaultNpmRegistryProvider(httpClient, this.cacheStore);
+    this.npmProvider =
+      deps.npmProvider ?? new DefaultNpmRegistryProvider(httpClient, this.cacheStore);
     this.repoProvider = deps.repoProvider ?? new DefaultGitHubProvider(httpClient, this.cacheStore);
-    this.advisoryProvider = deps.advisoryProvider ?? new DefaultAdvisoryProvider(httpClient, this.cacheStore);
+    this.advisoryProvider =
+      deps.advisoryProvider ?? new DefaultAdvisoryProvider(httpClient, this.cacheStore);
   }
 
-  async scan(projectPath: string, scanOverrides: { noCache?: boolean | undefined } = {}): Promise<Report> {
-    const discovery = await discoverDependencies(projectPath);
+  async scan(
+    projectPath: string,
+    scanOverrides: { noCache?: boolean | undefined; directOnly?: boolean | undefined } = {},
+  ): Promise<Report> {
+    const discovery = await discoverDependencies(projectPath, {
+      includeTransitive: !scanOverrides.directOnly,
+    });
 
     const results: DependencyHealthResult[] = [];
     const requestOptions = {
@@ -66,57 +78,93 @@ export class DepPulseEngine {
     };
 
     // Analyze dependencies with bounded parallel execution
-    for (const dep of discovery.dependencies) {
-      try {
-        const pkgMeta = await this.npmProvider.getPackageMeta(dep.name, dep.resolvedVersion, requestOptions);
-        const repoMeta = await this.repoProvider.getRepoMetadata(
-          pkgMeta.rawRepository?.url,
-          dep.name,
-          requestOptions,
-        );
-        let advisories: readonly ContextualAdvisory[] = [];
+    const concurrency = Math.min(
+      Math.max(1, this.config.network.concurrency || 8),
+      Math.max(1, discovery.dependencies.length),
+    );
+
+    let nextIndex = 0;
+    const workers = Array.from({ length: concurrency }, async () => {
+      while (nextIndex < discovery.dependencies.length) {
+        const dep = discovery.dependencies[nextIndex++];
+        if (!dep) break;
+
         try {
-          advisories = await this.advisoryProvider.getAdvisories(dep.name, dep.resolvedVersion, requestOptions);
-        } catch {
-          // Advisories are non-blocking
+          const pkgMeta = await this.npmProvider.getPackageMeta(
+            dep.name,
+            dep.resolvedVersion,
+            requestOptions,
+          );
+          const repoMeta = await this.repoProvider.getRepoMetadata(
+            pkgMeta.rawRepository?.url,
+            dep.name,
+            requestOptions,
+          );
+          let advisories: readonly ContextualAdvisory[] = [];
+          try {
+            advisories = await this.advisoryProvider.getAdvisories(
+              dep.name,
+              pkgMeta.version || dep.resolvedVersion,
+              requestOptions,
+            );
+          } catch {
+            // Advisories are non-blocking
+          }
+
+          // If dep was a semver range (direct scanning without lockfile), update resolvedVersion from pkgMeta
+          const effectiveDep: DependencyRecord =
+            pkgMeta.version &&
+            (dep.resolvedVersion.startsWith('^') ||
+              dep.resolvedVersion.startsWith('~') ||
+              dep.resolvedVersion.startsWith('>') ||
+              dep.resolvedVersion.startsWith('<') ||
+              dep.resolvedVersion === '*')
+              ? {
+                  ...dep,
+                  resolvedVersion: pkgMeta.version,
+                  id: `${dep.name}@${pkgMeta.version}`,
+                }
+              : dep;
+
+          const health = scoreDependencyHealth(effectiveDep, pkgMeta, repoMeta, advisories, {
+            minConfidenceThreshold: this.config.scoring.minConfidenceThreshold,
+            maturityThresholdYears: this.config.scoring.maturityThresholdYears,
+          });
+
+          results.push(health);
+        } catch (err) {
+          // Individual package fetch failure does not fail the entire scan (unless private/unavailable)
+          const fallbackMeta: PackageMetadata = {
+            name: dep.name,
+            version: dep.resolvedVersion,
+            latestVersion: dep.resolvedVersion,
+            publishedAt: '',
+            releaseCount: 0,
+            isDeprecated: false,
+            hasProvenance: false,
+            versionsTime: {},
+          };
+          const fallbackRepo = {
+            owner: '',
+            repo: '',
+            associationStatus: 'missing' as const,
+            isArchived: false,
+            isFork: false,
+            defaultBranch: 'main',
+            stars: 0,
+            openIssuesCount: 0,
+            unverifiedReason: `Upstream fetch failed: ${(err as Error).message}`,
+          };
+
+          const fallbackResult = scoreDependencyHealth(dep, fallbackMeta, fallbackRepo, [], {
+            minConfidenceThreshold: this.config.scoring.minConfidenceThreshold,
+          });
+          results.push(fallbackResult);
         }
-
-        const health = scoreDependencyHealth(dep, pkgMeta, repoMeta, advisories, {
-          minConfidenceThreshold: this.config.scoring.minConfidenceThreshold,
-          maturityThresholdYears: this.config.scoring.maturityThresholdYears,
-        });
-
-        results.push(health);
-      } catch (err) {
-        // Individual package fetch failure does not fail the entire scan (unless private/unavailable)
-        const fallbackMeta: PackageMetadata = {
-          name: dep.name,
-          version: dep.resolvedVersion,
-          latestVersion: dep.resolvedVersion,
-          publishedAt: '',
-          releaseCount: 0,
-          isDeprecated: false,
-          hasProvenance: false,
-          versionsTime: {},
-        };
-        const fallbackRepo = {
-          owner: '',
-          repo: '',
-          associationStatus: 'missing' as const,
-          isArchived: false,
-          isFork: false,
-          defaultBranch: 'main',
-          stars: 0,
-          openIssuesCount: 0,
-          unverifiedReason: `Upstream fetch failed: ${(err as Error).message}`,
-        };
-
-        const fallbackResult = scoreDependencyHealth(dep, fallbackMeta, fallbackRepo, [], {
-          minConfidenceThreshold: this.config.scoring.minConfidenceThreshold,
-        });
-        results.push(fallbackResult);
       }
-    }
+    });
+
+    await Promise.all(workers);
 
     // Deterministic sorting: Critical -> High -> Medium -> Unknown -> Low, then by score asc, then name
     const riskRank: Record<MaintenanceRisk, number> = {
@@ -208,7 +256,10 @@ export class DepPulseEngine {
   async analyze(packageName: string, version?: string): Promise<DependencyHealthResult> {
     const pkgMeta = await this.npmProvider.getPackageMeta(packageName, version);
     const resolvedVersion = version ?? pkgMeta.version;
-    const repoMeta = await this.repoProvider.getRepoMetadata(pkgMeta.rawRepository?.url, packageName);
+    const repoMeta = await this.repoProvider.getRepoMetadata(
+      pkgMeta.rawRepository?.url,
+      packageName,
+    );
     let advisories: readonly ContextualAdvisory[] = [];
     try {
       advisories = await this.advisoryProvider.getAdvisories(packageName, resolvedVersion);
@@ -234,10 +285,17 @@ export class DepPulseEngine {
     });
   }
 
-  async compare(packageName: string, fromVersion: string, toVersion: string): Promise<UpgradeAssessment> {
+  async compare(
+    packageName: string,
+    fromVersion: string,
+    toVersion: string,
+  ): Promise<UpgradeAssessment> {
     const currentHealth = await this.analyze(packageName, fromVersion);
     const targetMeta = await this.npmProvider.getPackageMeta(packageName, toVersion);
-    const targetRepo = await this.repoProvider.getRepoMetadata(targetMeta.rawRepository?.url, packageName);
+    const targetRepo = await this.repoProvider.getRepoMetadata(
+      targetMeta.rawRepository?.url,
+      packageName,
+    );
     const targetHealth = scoreDependencyHealth(
       {
         id: `${packageName}@${toVersion}`,

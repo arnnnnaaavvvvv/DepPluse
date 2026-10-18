@@ -33,7 +33,8 @@ export async function parsePnpmLockfile(lockfilePath: string): Promise<ParsedLoc
   const packagesMap = new Map<string, ResolvedPackageEntry>();
 
   // Extract packages if present in pnpm lockfile
-  const packagesBlock = parsedYaml?.['packages'] as Record<string, { resolution?: { integrity?: string } }> | undefined;
+  const packagesBlock = parsedYaml?.['packages'] as
+    Record<string, { resolution?: { integrity?: string } }> | undefined;
   if (packagesBlock && typeof packagesBlock === 'object') {
     for (const [key, val] of Object.entries(packagesBlock)) {
       // Key format in pnpm: e.g. "/lodash@4.17.21" or "lodash@4.17.21" or "/@scope/pkg@1.0.0"
@@ -41,7 +42,11 @@ export async function parsePnpmLockfile(lockfilePath: string): Promise<ParsedLoc
       const lastAt = cleanKey.lastIndexOf('@');
       if (lastAt > 0) {
         const name = cleanKey.slice(0, lastAt);
-        const version = cleanKey.slice(lastAt + 1).split('(')[0]?.split('_')[0] ?? '';
+        const version =
+          cleanKey
+            .slice(lastAt + 1)
+            .split('(')[0]
+            ?.split('_')[0] ?? '';
         if (name && version && !packagesMap.has(name)) {
           packagesMap.set(name, {
             name,

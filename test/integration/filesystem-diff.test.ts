@@ -5,6 +5,7 @@ import os from 'node:os';
 import crypto from 'node:crypto';
 import { DepPulseEngine } from '../../src/core/engine.js';
 import { handleScanCommand } from '../../src/cli/commands/scan.js';
+import { getDefaultConfig } from '../../src/core/config.js';
 
 interface FileSnapshot {
   size: number;
@@ -108,12 +109,24 @@ describe('Strict Read-Only Execution: Filesystem Diff Verification', () => {
     // 1. Snapshot project directory before scan
     const beforeSnapshot = await takeDirectorySnapshot(projectDir);
 
-    // 2. Execute programmatic Engine Scan
-    const engine = new DepPulseEngine();
-    await engine.scan(projectDir, { noCache: true });
+    // 2. Execute programmatic Engine Scan with isolated cache
+    const tmpCache = await fs.mkdtemp(path.join(os.tmpdir(), 'deppulse-readonly-cache-'));
+    try {
+      const config = {
+        ...getDefaultConfig(),
+        cache: {
+          dir: tmpCache,
+          enabled: false,
+        },
+      };
+      const engine = new DepPulseEngine(config);
+      await engine.scan(projectDir, { noCache: true });
 
-    // 3. Execute CLI command scan
-    await handleScanCommand(projectDir, { format: 'json', noCache: true });
+      // 3. Execute CLI command scan
+      await handleScanCommand(projectDir, { format: 'json', noCache: true });
+    } finally {
+      await fs.rm(tmpCache, { recursive: true, force: true });
+    }
 
     // 4. Snapshot project directory after scans
     const afterSnapshot = await takeDirectorySnapshot(projectDir);

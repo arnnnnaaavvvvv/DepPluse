@@ -18,7 +18,7 @@ export function computeConfidence(
 ): ConfidenceAssessment {
   let registryScore = 0;
   if (packageMeta.publishedAt && packageMeta.version) {
-    registryScore = 0.40;
+    registryScore = 0.4;
   }
 
   let repoScore = 0;
@@ -35,7 +35,7 @@ export function computeConfidence(
 
   let provenanceScore = 0;
   if (packageMeta.hasProvenance) {
-    provenanceScore = 0.10;
+    provenanceScore = 0.1;
   }
 
   const rawSum = registryScore + repoScore + runtimeScore + provenanceScore;

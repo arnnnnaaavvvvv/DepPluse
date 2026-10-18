@@ -92,9 +92,12 @@ export async function parseNpmLockfile(
 
     if (rootPkg) {
       if (rootPkg.dependencies) Object.keys(rootPkg.dependencies).forEach(d => directNames.add(d));
-      if (rootPkg.devDependencies) Object.keys(rootPkg.devDependencies).forEach(d => directNames.add(d));
-      if (rootPkg.peerDependencies) Object.keys(rootPkg.peerDependencies).forEach(d => directNames.add(d));
-      if (rootPkg.optionalDependencies) Object.keys(rootPkg.optionalDependencies).forEach(d => directNames.add(d));
+      if (rootPkg.devDependencies)
+        Object.keys(rootPkg.devDependencies).forEach(d => directNames.add(d));
+      if (rootPkg.peerDependencies)
+        Object.keys(rootPkg.peerDependencies).forEach(d => directNames.add(d));
+      if (rootPkg.optionalDependencies)
+        Object.keys(rootPkg.optionalDependencies).forEach(d => directNames.add(d));
     }
 
     const dependentsGraph = new Map<string, Set<string>>();
@@ -120,7 +123,8 @@ export async function parseNpmLockfile(
       }
 
       // Check if direct
-      const isDirect = directNames.has(name) && !pkgPath.slice('node_modules/'.length).includes('node_modules/');
+      const isDirect =
+        directNames.has(name) && !pkgPath.slice('node_modules/'.length).includes('node_modules/');
 
       // If already added, top-level node_modules/ takes precedence over nested
       const existing = packagesMap.get(name);

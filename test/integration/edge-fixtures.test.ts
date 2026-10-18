@@ -57,7 +57,10 @@ describe('Integration: Edge Fixtures & Failure Tolerance', () => {
               '20.12.0': {
                 name: '@types/node',
                 version: '20.12.0',
-                repository: { type: 'git', url: 'https://github.com/DefinitelyTyped/DefinitelyTyped.git' },
+                repository: {
+                  type: 'git',
+                  url: 'https://github.com/DefinitelyTyped/DefinitelyTyped.git',
+                },
               },
             },
             time: {

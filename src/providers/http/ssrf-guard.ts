@@ -81,10 +81,7 @@ export function sanitizeUrl(rawUrl: string): string {
  * Validates target URLs to protect against Server-Side Request Forgery (SSRF).
  * Enforces HTTPS, blocks private/loopback/link-local/metadata IPs, and verifies hostname allowlists.
  */
-export function validateSafeUrl(
-  rawUrl: string,
-  customAllowedHosts: readonly string[] = [],
-): URL {
+export function validateSafeUrl(rawUrl: string, customAllowedHosts: readonly string[] = []): URL {
   let parsed: URL;
   try {
     parsed = new URL(rawUrl);

@@ -10,7 +10,10 @@ export const ExceptionRuleSchema = z.object({
   name: z.string().min(1, 'Package name in allowList cannot be empty'),
   versionRange: z.string().default('*'),
   reason: z.string().min(5, 'Reason for exception must be documented with at least 5 characters'),
-  expiresAt: z.string().datetime({ message: 'expiresAt must be a valid ISO-8601 datetime' }).optional(),
+  expiresAt: z
+    .string()
+    .datetime({ message: 'expiresAt must be a valid ISO-8601 datetime' })
+    .optional(),
 });
 
 export const ScoringConfigSchema = z.object({
@@ -19,10 +22,7 @@ export const ScoringConfigSchema = z.object({
     .min(0, 'minConfidenceThreshold must be >= 0')
     .max(1, 'minConfidenceThreshold must be <= 1')
     .default(0.35),
-  maturityThresholdYears: z
-    .number()
-    .min(1, 'maturityThresholdYears must be >= 1')
-    .default(4),
+  maturityThresholdYears: z.number().min(1, 'maturityThresholdYears must be >= 1').default(4),
 });
 
 export const PolicyConfigSchema = z.object({
@@ -52,7 +52,9 @@ export const CacheConfigSchema = z.object({
 
 export const ConfigSchema = z.object({
   version: z.literal(1, {
-    errorMap: () => ({ message: 'Unsupported configuration version. Currently only version 1 is supported.' }),
+    errorMap: () => ({
+      message: 'Unsupported configuration version. Currently only version 1 is supported.',
+    }),
   }),
   scoring: ScoringConfigSchema.default({}),
   policy: PolicyConfigSchema.default({}),

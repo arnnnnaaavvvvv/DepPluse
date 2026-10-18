@@ -1,6 +1,7 @@
 import type { ContextualAdvisory } from '../../core/types.js';
 import type { AdvisoryProvider, CacheStore, RequestOptions } from '../types.js';
 import type { ResilientHttpClient } from '../http/client.js';
+import semver from 'semver';
 
 interface OsvApiResponse {
   vulns?: Array<{
@@ -32,11 +33,20 @@ export class DefaultAdvisoryProvider implements AdvisoryProvider {
       if (cached) return cached;
     }
 
-    // OSV provides open package vulnerability data
-    const url = `https://api.osv.dev/v1/query?package.name=${encodeURIComponent(packageName)}&package.ecosystem=npm&version=${encodeURIComponent(version)}`;
+    // OSV provides open package vulnerability data via POST /v1/query
+    const url = 'https://api.osv.dev/v1/query';
+    const queryPayload: Record<string, unknown> = {
+      package: {
+        name: packageName,
+        ecosystem: 'npm',
+      },
+    };
+    if (version && semver.valid(version)) {
+      queryPayload['version'] = version;
+    }
 
     try {
-      const data = await this.httpClient.getJson<OsvApiResponse>(url, {
+      const data = await this.httpClient.postJson<OsvApiResponse>(url, queryPayload, {
         signal: options.signal,
         timeoutMs: options.timeoutMs,
       });

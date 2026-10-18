@@ -11,9 +11,10 @@
 
 ## The Problem
 
-Most dependency tools answer only one question: *"Is there a newer version?"* (`npm outdated`) or *"Is there a known CVE?"* (`npm audit`).
+Most dependency tools answer only one question: _"Is there a newer version?"_ (`npm outdated`) or _"Is there a known CVE?"_ (`npm audit`).
 
 In practice, the greatest dependency risks aren't just version numbers—they are **maintenance risks**:
+
 - Has a library been quietly abandoned by its author?
 - Did the upstream GitHub repository get archived?
 - Does a package declare obsolete Node engines that break on modern runtimes?
@@ -26,15 +27,15 @@ In practice, the greatest dependency risks aren't just version numbers—they ar
 
 ## Honest Differentiators
 
-| Capability | `npm outdated` | `Socket.dev` | `Renovate` | `DepPulse` |
-| :--- | :--- | :--- | :--- | :--- |
-| **Primary Focus** | Semver deltas | Malware & install scripts | Automated PR updates | Maintenance health & upgrade risk |
-| **Maintenance Health Scoring** | None | SaaS alert heuristics | Test pass rates | **Deterministic, calibrated 0–100 score** |
-| **"Done" vs "Dead" Calibration** | None | Flags inactivity | None | **Mature-stable lifecycle awareness** |
-| **Anti-Spoofing Repo Verification**| Blindly trusts package.json | Internal database | Trusts git URLs | **Cryptographic provenance & identity checks** |
-| **Advisory Decoupling** | N/A | Mixed into score | PR triggers | **CVEs kept strictly contextual (0 score impact)** |
-| **Read-Only / Zero Mutation** | Read-only | Read-only / Firewall | Mutates lockfiles | **Strictly read-only; zero mutation** |
-| **Source Code / Secret Scanning** | None | Yes | None | **Explicitly Out of Scope** (see MEJOR) |
+| Capability                          | `npm outdated`              | `Socket.dev`              | `Renovate`           | `DepPulse`                                         |
+| :---------------------------------- | :-------------------------- | :------------------------ | :------------------- | :------------------------------------------------- |
+| **Primary Focus**                   | Semver deltas               | Malware & install scripts | Automated PR updates | Maintenance health & upgrade risk                  |
+| **Maintenance Health Scoring**      | None                        | SaaS alert heuristics     | Test pass rates      | **Deterministic, calibrated 0–100 score**          |
+| **"Done" vs "Dead" Calibration**    | None                        | Flags inactivity          | None                 | **Mature-stable lifecycle awareness**              |
+| **Anti-Spoofing Repo Verification** | Blindly trusts package.json | Internal database         | Trusts git URLs      | **Cryptographic provenance & identity checks**     |
+| **Advisory Decoupling**             | N/A                         | Mixed into score          | PR triggers          | **CVEs kept strictly contextual (0 score impact)** |
+| **Read-Only / Zero Mutation**       | Read-only                   | Read-only / Firewall      | Mutates lockfiles    | **Strictly read-only; zero mutation**              |
+| **Source Code / Secret Scanning**   | None                        | Yes                       | None                 | **Explicitly Out of Scope** (see MEJOR)            |
 
 ---
 
@@ -80,13 +81,13 @@ Tip: Review flagged dependencies or update policy in deppulse.config.json
 
 ```bash
 # Run instantly with npx (no install needed)
-npx deppulse scan
+npx @arnavvv/deppulse scan .
 
 # Or install globally
-npm install -g deppulse
+npm install -g @arnavvv/deppulse
 
 # Or add as a development dependency
-npm install --save-dev deppulse
+npm install --save-dev @arnavvv/deppulse
 ```
 
 ---
@@ -94,15 +95,19 @@ npm install --save-dev deppulse
 ## CLI Commands
 
 ### 1. `scan [path]`
+
 Scans manifest and lockfiles, evaluates all direct and transitive dependencies, enforces health policies, and sets CI exit codes.
 
 ```bash
 deppulse scan
+deppulse scan --direct
 deppulse scan ./packages/web --format json --output report.json
 deppulse scan --fail-on high --verbose
 ```
 
 **Flags**:
+
+- `-d, --direct, --direct-only`: Scan only direct dependencies from `package.json` (bypasses transitive lockfile resolution).
 - `-f, --format <format>`: Output format: `terminal` (default), `json`, or `markdown`.
 - `--fail-on <risk>`: Fail with exit code 1 if any dependency matches risk: `low`, `medium`, `high`, `critical`, `unknown`.
 - `--no-cache`: Bypass local HTTP cache.
@@ -111,6 +116,7 @@ deppulse scan --fail-on high --verbose
 - `-v, --verbose`: Display all dependencies, including healthy ones.
 
 ### 2. `analyze <package[@version]>`
+
 Inspects upstream packuments, release timeline, repository activity, and returns a detailed health scorecard for a single package.
 
 ```bash
@@ -119,6 +125,7 @@ deppulse analyze rimraf@3.0.2
 ```
 
 ### 3. `compare <package>`
+
 Evaluates upgrade risk between two versions. Checks for breaking Node engine declarations, deprecations, and whether target releases carry unaddressed maintenance debt.
 
 ```bash
@@ -126,6 +133,7 @@ deppulse compare rimraf --from 3.0.2 --to 5.0.5
 ```
 
 ### 4. `explain <package>`
+
 Prints the exact audit trail and evidence chain explaining how a package's score and risk classification were calculated.
 
 ```bash
@@ -139,16 +147,18 @@ deppulse explain request
 Every score is **deterministic**, **rule-based**, and **versioned (v1)**. No machine learning is used.
 
 ### Signals & Fatal Caps
+
 1. **Deprecation**: If marked deprecated on npm, the score is capped at **$\max(Score) = 20$** (`critical`).
 2. **Archived Repository**: If the upstream GitHub repo is archived, the score is capped at **$\max(Score) = 25$** (`critical`).
 3. **Maturity-Calibrated Recency**:
-   - *Mature-Stable Tier* ($\ge 4$ years old, steady adoption, multiple releases): 0 penalty for infrequent releases if Node engine compatibility is preserved.
-   - *Emerging Tier*: Penalized if $> 365$ days elapse without a release.
+   - _Mature-Stable Tier_ ($\ge 4$ years old, steady adoption, multiple releases): 0 penalty for infrequent releases if Node engine compatibility is preserved.
+   - _Emerging Tier_: Penalized if $> 365$ days elapse without a release.
 4. **Node Engine Compatibility**: Incompatibility with active Node LTS runtimes (18, 20, 22) caps score at **40**.
 5. **Anti-Spoofing & Provenance**: Packages claiming high-profile monorepos without cryptographic provenance are capped at **30** (`high`).
 6. **Security Advisories**: Contextual signal only; strictly **0 contribution** to maintenance score.
 
 ### Confidence Rule
+
 $$\text{Confidence} = C_{\text{registry}} (0.40) + C_{\text{repo}} (0.35) + C_{\text{runtime}} (0.15) + C_{\text{provenance}} (0.10)$$
 If $\text{Confidence} < 0.35$, the score is `null` and risk is `unknown`. **Missing data is never penalized as poor health.**
 
@@ -156,15 +166,15 @@ If $\text{Confidence} < 0.35$, the score is `null` and risk is `unknown`. **Miss
 
 ## Lockfile Support
 
-| Lockfile Format | Level | Description |
-| :--- | :--- | :--- |
-| `package-lock.json` (v2, v3) | **Full** | Deep direct and transitive tree analysis |
-| `npm-shrinkwrap.json` | **Full** | Deep direct and transitive tree analysis |
-| `package-lock.json` (v1) | **Full** | Recursive dependency parsing |
-| `pnpm-lock.yaml` | **Partial** | Direct dependencies + package specifiers |
-| `yarn.lock` | **Direct-Only** | Analyzes direct dependencies from `package.json` |
+| Lockfile Format              | Level           | Description                                      |
+| :--------------------------- | :-------------- | :----------------------------------------------- |
+| `package-lock.json` (v2, v3) | **Full**        | Deep direct and transitive tree analysis         |
+| `npm-shrinkwrap.json`        | **Full**        | Deep direct and transitive tree analysis         |
+| `package-lock.json` (v1)     | **Full**        | Recursive dependency parsing                     |
+| `pnpm-lock.yaml`             | **Partial**     | Direct dependencies + package specifiers         |
+| `yarn.lock`                  | **Direct-Only** | Analyzes direct dependencies from `package.json` |
 
-*Unsupported or missing lockfiles are reported as partial coverage, never silently ignored.*
+_Unsupported or missing lockfiles are reported as partial coverage, never silently ignored._
 
 ---
 
@@ -206,10 +216,10 @@ console.log(`Risk: ${health.maintenanceRisk}, Score: ${health.score}`);
 - [x] Repository anti-spoofing and provenance checks
 - [x] Resilient HTTP client with retry, jitter, rate-limit handling, and disk cache
 - [x] Terminal, JSON, and Markdown report formatters
-- [ ] *(Planned)* Deep AST parsing for `pnpm-lock.yaml` virtual stores (v1.1)
-- [ ] *(Planned)* Deep resolution for `yarn.lock` v1 & v2+ (v1.1)
-- [ ] *(Planned)* Multi-package monorepo workspace matrix reports (v1.1)
-- [ ] *(Planned)* Automated PR comment integration action (v1.2)
+- [ ] _(Planned)_ Deep AST parsing for `pnpm-lock.yaml` virtual stores (v1.1)
+- [ ] _(Planned)_ Deep resolution for `yarn.lock` v1 & v2+ (v1.1)
+- [ ] _(Planned)_ Multi-package monorepo workspace matrix reports (v1.1)
+- [ ] _(Planned)_ Automated PR comment integration action (v1.2)
 
 ---
 

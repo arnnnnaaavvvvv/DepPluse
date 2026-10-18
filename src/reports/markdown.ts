@@ -6,7 +6,9 @@ export function formatMarkdownReport(report: Report): string {
   const statusEmoji = report.policyResult.isPassed ? '✅' : '❌';
   lines.push(`## ${statusEmoji} DepPulse Dependency Health Report`);
   lines.push('');
-  lines.push(`- **Scanned**: ${report.scannedDependenciesCount} packages (${report.directCount} direct, ${report.transitiveCount} transitive)`);
+  lines.push(
+    `- **Scanned**: ${report.scannedDependenciesCount} packages (${report.directCount} direct, ${report.transitiveCount} transitive)`,
+  );
   lines.push(`- **Coverage**: ${report.coverage} (${report.lockfileFormat ?? 'no lockfile'})`);
   lines.push(`- **Scan Timestamp**: ${report.generatedAt}`);
   lines.push('');
@@ -33,7 +35,8 @@ export function formatMarkdownReport(report: Report): string {
 
     for (const item of flagged) {
       const primaryIssue =
-        item.evidence.find(e => e.isFatalCap || e.contribution < 0)?.explanation ?? 'Maintenance warning';
+        item.evidence.find(e => e.isFatalCap || e.contribution < 0)?.explanation ??
+        'Maintenance warning';
       lines.push(
         `| \`${item.dependency.id}\` | **${item.maintenanceRisk.toUpperCase()}** | ${item.score ?? 'N/A'} | ${primaryIssue} |`,
       );

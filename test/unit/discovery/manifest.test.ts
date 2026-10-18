@@ -69,7 +69,10 @@ describe('Manifest Parser', () => {
 
   it('throws DiscoveryError on malformed JSON with recovery hint', async () => {
     tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'deppulse-malformed-test-'));
-    await fs.writeFile(path.join(tmpDir, 'package.json'), '{ "name": "bad", trailingComma: true, }');
+    await fs.writeFile(
+      path.join(tmpDir, 'package.json'),
+      '{ "name": "bad", trailingComma: true, }',
+    );
 
     await expect(parseManifest(tmpDir)).rejects.toThrow(DiscoveryError);
     try {

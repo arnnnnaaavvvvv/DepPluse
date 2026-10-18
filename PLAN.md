@@ -34,12 +34,14 @@ gantt
 ## Phase 1: Core Domain, Schemas & Manifest/Lockfile Discovery
 
 ### Deliverables:
+
 - Pure TypeScript domain models and strict Zod configuration schemas.
 - Manifest parser (`package.json` extraction of direct dependencies: prod, dev, peer, optional).
 - Lockfile v2/v3 decoder (`package-lock.json` parsing with full transitive tree resolution).
 - Graceful partial-coverage handling for unsupported lockfile versions.
 
 ### Files:
+
 - `src/core/types.ts`
 - `src/policy/schemas.ts`
 - `src/discovery/manifest.ts`
@@ -52,6 +54,7 @@ gantt
 - `test/fixtures/projects/lockfile-v1-unsupported/...`
 
 ### Tests & Acceptance Criteria:
+
 - **Unit**: Verify `package.json` correctly categorizes prod, dev, peer, and optional deps.
 - **Unit**: Verify `package-lock.json` v2/v3 correctly builds graph of direct and transitive dependencies.
 - **Acceptance Criterion**: When an unsupported lockfile (v1 or yarn/pnpm) is encountered, the discovery engine emits a structured warning and returns direct dependencies with `transitiveCoverage: 'partial'`, never crashing.
@@ -61,6 +64,7 @@ gantt
 ## Phase 2: Providers, Resilient Networking & Cache Layer
 
 ### Deliverables:
+
 - In-memory & local disk cache (`.deppulse/cache/`) with TTL hierarchy and atomic file operations.
 - Resilient HTTP client with SSRF protection, protocol whitelist, timeout control via `AbortSignal`, and exponential backoff with full jitter.
 - npm Registry Provider: Packument fetching, version time extraction, deprecation message retrieval.
@@ -69,6 +73,7 @@ gantt
 - Contextual Advisory Provider: Pulls vulnerability advisories as isolated annotations (0 score contribution).
 
 ### Files:
+
 - `src/cache/disk-store.ts`
 - `src/cache/types.ts`
 - `src/providers/http/client.ts`
@@ -82,6 +87,7 @@ gantt
 - `test/unit/cache/disk-store.test.ts`
 
 ### Tests & Acceptance Criteria:
+
 - **Resilience**: Simulated HTTP 429 returns with `Retry-After` retry logic and does not exceed bounded concurrency.
 - **Security**: Target URLs to `http://` or private internal IPs (`127.0.0.1`, `169.254.169.254`) are blocked with `SSRFProtectionError`.
 - **Anti-Spoofing**: A fake package claiming `https://github.com/facebook/react` is flagged as `associationStatus: 'divergent'`.
@@ -91,6 +97,7 @@ gantt
 ## Phase 3: Analysis & Scoring Engine (Pure Math & Rules)
 
 ### Deliverables:
+
 - Telemetry aggregator and evidence compiler.
 - Maturity curve calibrator (detects stable, single-purpose libraries vs abandoned packages).
 - Pure deterministic scoring engine with versioned rule sets.
@@ -98,6 +105,7 @@ gantt
 - Calibration test suite with 12 golden package fixtures.
 
 ### Files:
+
 - `src/analysis/cadence.ts`
 - `src/analysis/compatibility.ts`
 - `src/scoring/engine.ts`
@@ -109,6 +117,7 @@ gantt
 - `test/integration/calibration-fixtures.test.ts`
 
 ### Tests & Acceptance Criteria:
+
 - **Golden Fixture Verification**:
   - `wrappy` and `mime-types` achieve $\ge 80$ score (Low Risk) despite multi-year release gaps.
   - `request` is capped at $\le 20$ (Critical Risk) due to deprecation.
@@ -121,6 +130,7 @@ gantt
 ## Phase 4: CLI, Reporters, Policy Engine & MVP Completion
 
 ### Deliverables:
+
 - CLI command dispatcher with Commander:
   - `deppulse scan [path]`
   - `deppulse analyze <pkg>`
@@ -130,6 +140,7 @@ gantt
 - Exit codes: 0 (clean), 1 (policy violation), 2 (runtime error).
 
 ### Files:
+
 - `src/cli/index.ts`
 - `src/cli/commands/scan.ts`
 - `src/cli/commands/analyze.ts`
@@ -142,6 +153,7 @@ gantt
 - `test/e2e/cli-exit-codes.test.ts`
 
 ### Tests & Acceptance Criteria:
+
 - **E2E**: `deppulse scan --format json` outputs valid schema-compliant JSON to stdout.
 - **Exit Code**: Scanning a fixture with deprecated dependency and `--fail-on critical` exits with code 1.
 - **Exit Code**: Scanning with an invalid flag exits with code 2 and a recovery hint.
@@ -151,6 +163,7 @@ gantt
 ## Phase 5: Hardening & v1.1 Enhancements
 
 ### Scope (v1.1):
+
 - Lockfile support for `pnpm` (`pnpm-lock.yaml`) and `yarn` (`yarn.lock` v1 & berry).
 - Monorepo & workspace awareness (filtering internal workspace packages from external npm packages).
 - Markdown PR comment summary formatter optimized for GitHub Actions.
@@ -161,6 +174,7 @@ gantt
 ## Phase 6: Upgrade Intelligence & v1.2 Scope
 
 ### Scope (v1.2):
+
 - `deppulse compare <pkg> --from <v1> --to <v2>` command.
 - Breaking change and engine deprecation diffing between versions.
 - Step-by-step upgrade path recommendations (safe jump targets avoiding known unmaintained intermediate releases).

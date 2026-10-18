@@ -57,7 +57,11 @@ export async function parseManifest(projectDirOrFilePath: string): Promise<Proje
   const workspaces: string[] = [];
   if (Array.isArray(raw.workspaces)) {
     workspaces.push(...raw.workspaces);
-  } else if (raw.workspaces && typeof raw.workspaces === 'object' && Array.isArray(raw.workspaces.packages)) {
+  } else if (
+    raw.workspaces &&
+    typeof raw.workspaces === 'object' &&
+    Array.isArray(raw.workspaces.packages)
+  ) {
     workspaces.push(...raw.workspaces.packages);
   }
 

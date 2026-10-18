@@ -17,7 +17,8 @@ export interface DependencyRecord {
   readonly registryUrl: string;
   readonly isDirect: boolean;
   readonly dependents: readonly string[];
-  readonly skipReason?: 'ignored_by_config' | 'private_workspace' | 'unsupported_source' | 'unresolved' | undefined;
+  readonly skipReason?:
+    'ignored_by_config' | 'private_workspace' | 'unsupported_source' | 'unresolved' | undefined;
 }
 
 export interface PackageMetadata {
@@ -30,16 +31,20 @@ export interface PackageMetadata {
   readonly releaseCount: number;
   readonly isDeprecated: boolean;
   readonly deprecationReason?: string | undefined;
-  readonly engines?: {
-    readonly node?: string | undefined;
-    readonly npm?: string | undefined;
-  } | undefined;
+  readonly engines?:
+    | {
+        readonly node?: string | undefined;
+        readonly npm?: string | undefined;
+      }
+    | undefined;
   readonly peerDependencies?: Readonly<Record<string, string>> | undefined;
-  readonly rawRepository?: {
-    readonly type?: string | undefined;
-    readonly url?: string | undefined;
-    readonly directory?: string | undefined;
-  } | undefined;
+  readonly rawRepository?:
+    | {
+        readonly type?: string | undefined;
+        readonly url?: string | undefined;
+        readonly directory?: string | undefined;
+      }
+    | undefined;
   readonly hasProvenance: boolean;
   readonly versionsTime: Readonly<Record<string, string>>;
 }

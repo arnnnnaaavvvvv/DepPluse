@@ -1,5 +1,10 @@
 import semver from 'semver';
-import type { DependencyRecord, MaintenanceRisk, PackageMetadata, UpgradeAssessment } from '../core/types.js';
+import type {
+  DependencyRecord,
+  MaintenanceRisk,
+  PackageMetadata,
+  UpgradeAssessment,
+} from '../core/types.js';
 
 export function evaluateUpgradeRisk(
   dependency: DependencyRecord,
@@ -26,7 +31,10 @@ export function evaluateUpgradeRisk(
   let breakingEngineChanges = false;
   if (targetMeta.engines?.node) {
     // If target requires modern node
-    if (!semver.satisfies('18.20.0', targetMeta.engines.node) && !semver.satisfies('20.18.0', targetMeta.engines.node)) {
+    if (
+      !semver.satisfies('18.20.0', targetMeta.engines.node) &&
+      !semver.satisfies('20.18.0', targetMeta.engines.node)
+    ) {
       breakingEngineChanges = true;
     }
   }
@@ -37,7 +45,9 @@ export function evaluateUpgradeRisk(
   // 1. Target is deprecated
   if (targetMeta.isDeprecated) {
     recommendation = 'hold';
-    rationales.push(`Target version ${targetVersion} is deprecated (${targetMeta.deprecationReason ?? 'No reason provided'}).`);
+    rationales.push(
+      `Target version ${targetVersion} is deprecated (${targetMeta.deprecationReason ?? 'No reason provided'}).`,
+    );
   }
 
   // 2. Target is unstable prerelease
@@ -49,7 +59,9 @@ export function evaluateUpgradeRisk(
   // 3. Breaking engine changes
   if (breakingEngineChanges) {
     recommendation = 'hold';
-    rationales.push(`Target version ${targetVersion} declares breaking engines.node (${targetMeta.engines?.node}) incompatible with Node 18/20.`);
+    rationales.push(
+      `Target version ${targetVersion} declares breaking engines.node (${targetMeta.engines?.node}) incompatible with Node 18/20.`,
+    );
   }
 
   // 4. Balanced upgrade decisions (not treating every major as bad or every minor as safe)
@@ -67,11 +79,15 @@ export function evaluateUpgradeRisk(
         );
       } else {
         recommendation = 'monitor';
-        rationales.push(`Target version still carries ${targetRisk} risk; monitor for healthier alternatives.`);
+        rationales.push(
+          `Target version still carries ${targetRisk} risk; monitor for healthier alternatives.`,
+        );
       }
     } else if (updateType === 'major') {
       recommendation = 'monitor';
-      rationales.push(`Major version upgrade. Review breaking changes and release changelog before merging.`);
+      rationales.push(
+        `Major version upgrade. Review breaking changes and release changelog before merging.`,
+      );
     } else {
       recommendation = 'upgrade';
       rationales.push(`Safe ${updateType} update within well-maintained release track.`);
@@ -79,7 +95,9 @@ export function evaluateUpgradeRisk(
   }
 
   if (targetRisk === 'unknown') {
-    rationales.push('Note: Telemetry on target version is incomplete; verify build in test environment.');
+    rationales.push(
+      'Note: Telemetry on target version is incomplete; verify build in test environment.',
+    );
   }
 
   return {

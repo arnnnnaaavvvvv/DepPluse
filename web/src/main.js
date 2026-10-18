@@ -4,11 +4,11 @@
 
 // --- 1. Quickstart Package Manager Switcher ---
 const installCommands = {
-  npx: 'npx deppulse scan .',
-  npm: 'npm install -D deppulse\nnpx deppulse scan .',
-  pnpm: 'pnpm add -D deppulse\npnpm deppulse scan .',
-  yarn: 'yarn add -D deppulse\nyarn deppulse scan .',
-  global: 'npm install -g deppulse\ndeppulse scan .',
+  npx: 'npx @arnavvv/deppulse scan .',
+  npm: 'npm install -D @arnavvv/deppulse\nnpx @arnavvv/deppulse scan .',
+  pnpm: 'pnpm add -D @arnavvv/deppulse\npnpm @arnavvv/deppulse scan .',
+  yarn: 'yarn add -D @arnavvv/deppulse\nyarn @arnavvv/deppulse scan .',
+  global: 'npm install -g @arnavvv/deppulse\ndeppulse scan .',
 };
 
 const installTabs = document.querySelectorAll('.install-tab');
@@ -58,8 +58,14 @@ function setupCopyButton(btnId, getText) {
   });
 }
 
-setupCopyButton('btn-copy-quick', () => document.getElementById('quick-run-cmd')?.textContent || 'npx deppulse scan .');
-setupCopyButton('btn-copy-install', () => installCode?.textContent || 'npx deppulse scan .');
+setupCopyButton(
+  'btn-copy-quick',
+  () => document.getElementById('quick-run-cmd')?.textContent || 'npx @arnavvv/deppulse scan .',
+);
+setupCopyButton(
+  'btn-copy-install',
+  () => installCode?.textContent || 'npx @arnavvv/deppulse scan .',
+);
 
 // --- 3. Interactive Terminal Simulator ---
 const terminalOutputs = {
@@ -252,7 +258,8 @@ function updateCalculator() {
   const hasCve = Boolean(toggleCve?.checked);
 
   // 1. Mature-Stable Determination
-  const isMatureStable = ageYears >= 4 && totalReleases >= 6 && isEnginesCompatible && !isDeprecated && !isArchived;
+  const isMatureStable =
+    ageYears >= 4 && totalReleases >= 6 && isEnginesCompatible && !isDeprecated && !isArchived;
 
   // 2. Base Score Calculation
   let rawScore = 100;
@@ -277,33 +284,65 @@ function updateCalculator() {
   } else {
     if (recencyDays <= 180) {
       rawScore += 10;
-      evidence.push({ text: `Active release cadence: last published ${recencyDays} days ago.`, pts: '+10 pts', type: 'pts-bonus' });
+      evidence.push({
+        text: `Active release cadence: last published ${recencyDays} days ago.`,
+        pts: '+10 pts',
+        type: 'pts-bonus',
+      });
     } else if (recencyDays <= 365) {
-      evidence.push({ text: `Moderate release cadence: published ${recencyDays} days ago.`, pts: '0 pts', type: 'pts-neutral' });
+      evidence.push({
+        text: `Moderate release cadence: published ${recencyDays} days ago.`,
+        pts: '0 pts',
+        type: 'pts-neutral',
+      });
     } else if (recencyDays <= 730) {
       rawScore -= 15;
-      evidence.push({ text: `Slow maintenance: no releases in ${recencyDays} days (>1 year).`, pts: '-15 pts', type: 'pts-penalty' });
+      evidence.push({
+        text: `Slow maintenance: no releases in ${recencyDays} days (>1 year).`,
+        pts: '-15 pts',
+        type: 'pts-penalty',
+      });
     } else {
       rawScore -= 25;
-      evidence.push({ text: `Stagnant cadence: no releases in ${recencyDays} days (>2 years).`, pts: '-25 pts', type: 'pts-penalty' });
+      evidence.push({
+        text: `Stagnant cadence: no releases in ${recencyDays} days (>2 years).`,
+        pts: '-25 pts',
+        type: 'pts-penalty',
+      });
     }
   }
 
   // Engines LTS Compatibility
   if (!isEnginesCompatible) {
     rawScore -= 25;
-    evidence.push({ text: 'Incompatible with all active Node.js LTS runtimes.', pts: '-25 pts', type: 'pts-penalty' });
+    evidence.push({
+      text: 'Incompatible with all active Node.js LTS runtimes.',
+      pts: '-25 pts',
+      type: 'pts-penalty',
+    });
   } else {
-    evidence.push({ text: 'Engine declaration verified compatible with Node.js LTS.', pts: '+5 pts', type: 'pts-bonus' });
+    evidence.push({
+      text: 'Engine declaration verified compatible with Node.js LTS.',
+      pts: '+5 pts',
+      type: 'pts-bonus',
+    });
   }
 
   // Upstream Repo Verification
   if (!isRepoVerified) {
     rawScore -= 20;
-    evidence.push({ text: 'Upstream repository link is missing or unverified.', pts: '-20 pts', type: 'pts-penalty' });
+    evidence.push({
+      text: 'Upstream repository link is missing or unverified.',
+      pts: '-20 pts',
+      type: 'pts-penalty',
+    });
   } else if (!isArchived) {
     rawScore += 5;
-    evidence.push({ text: 'Verified GitHub repository with active community.', pts: '+5 pts', type: 'pts-bonus' });
+    evidence.push({
+      text: 'Verified GitHub repository with active community.',
+      pts: '+5 pts',
+      type: 'pts-bonus',
+    });
   }
 
   // CVE Context (Strictly 0 score contribution)
@@ -319,19 +358,35 @@ function updateCalculator() {
   let finalScore = rawScore;
   if (!isEnginesCompatible) {
     finalScore = Math.min(finalScore, 40);
-    evidence.push({ text: 'Fatal Cap Triggered: Incompatible engines capped at max 40.', pts: 'Cap 40', type: 'pts-cap' });
+    evidence.push({
+      text: 'Fatal Cap Triggered: Incompatible engines capped at max 40.',
+      pts: 'Cap 40',
+      type: 'pts-cap',
+    });
   }
   if (!isRepoVerified) {
     finalScore = Math.min(finalScore, 30);
-    evidence.push({ text: 'Fatal Cap Triggered: Unverified repo capped at max 30.', pts: 'Cap 30', type: 'pts-cap' });
+    evidence.push({
+      text: 'Fatal Cap Triggered: Unverified repo capped at max 30.',
+      pts: 'Cap 30',
+      type: 'pts-cap',
+    });
   }
   if (isArchived) {
     finalScore = Math.min(finalScore, 25);
-    evidence.push({ text: 'Fatal Cap Triggered: Upstream repository archived by author.', pts: 'Cap 25', type: 'pts-cap' });
+    evidence.push({
+      text: 'Fatal Cap Triggered: Upstream repository archived by author.',
+      pts: 'Cap 25',
+      type: 'pts-cap',
+    });
   }
   if (isDeprecated) {
     finalScore = Math.min(finalScore, 20);
-    evidence.push({ text: 'Fatal Cap Triggered: Package officially marked deprecated.', pts: 'Cap 20', type: 'pts-cap' });
+    evidence.push({
+      text: 'Fatal Cap Triggered: Package officially marked deprecated.',
+      pts: 'Cap 20',
+      type: 'pts-cap',
+    });
   }
 
   finalScore = Math.max(0, Math.min(100, Math.round(finalScore)));
@@ -409,7 +464,8 @@ function updateConfigJson() {
   const ttl = Number(cfgCacheTtl?.value || 24);
 
   const configObj = {
-    $schema: 'https://raw.githubusercontent.com/arnnnnaaavvvvv/DepPlus/main/docs/config.schema.json',
+    $schema:
+      'https://raw.githubusercontent.com/arnnnnaaavvvvv/DepPlus/main/docs/config.schema.json',
     version: '1.0.0',
     policy: {
       failOnRisk: failRiskValues,

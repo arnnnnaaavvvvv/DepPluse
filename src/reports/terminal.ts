@@ -32,13 +32,19 @@ export function formatTerminalReport(
 
   // Title & Header
   lines.push('');
-  lines.push(pc.bold(pc.cyan('DepPulse')) + ' ' + pc.dim('v0.1.0 – Dependency Health & Maintenance Intelligence'));
+  lines.push(
+    pc.bold(pc.cyan('DepPulse')) +
+      ' ' +
+      pc.dim('v0.1.1 – Dependency Health & Maintenance Intelligence'),
+  );
   lines.push(pc.dim('─'.repeat(70)));
 
   // Manifest info
   lines.push(
     `Manifest: ${pc.bold(report.manifestPath)} ${
-      report.lockfilePath ? pc.dim(`(${report.lockfileFormat}, coverage: ${report.coverage})`) : pc.yellow('(no lockfile)')
+      report.lockfilePath
+        ? pc.dim(`(${report.lockfileFormat}, coverage: ${report.coverage})`)
+        : pc.yellow('(no lockfile)')
     }`,
   );
   lines.push(
@@ -101,16 +107,28 @@ export function formatTerminalReport(
     }
   } else {
     lines.push('');
-    lines.push(pc.green('✔ No critical, high, or medium maintenance risks found. All scanned packages are healthy.'));
+    lines.push(
+      pc.green(
+        '✔ No critical, high, or medium maintenance risks found. All scanned packages are healthy.',
+      ),
+    );
     lines.push('');
   }
 
   // Policy Outcome
   lines.push(pc.dim('─'.repeat(70)));
   if (report.policyResult.isPassed) {
-    lines.push(pc.bold(pc.green('✔ POLICY PASSED: All dependencies satisfy configured health thresholds.')));
+    lines.push(
+      pc.bold(pc.green('✔ POLICY PASSED: All dependencies satisfy configured health thresholds.')),
+    );
   } else {
-    lines.push(pc.bold(pc.red(`✖ POLICY FAILED: Found ${report.policyResult.violations.length} policy violation(s):`)));
+    lines.push(
+      pc.bold(
+        pc.red(
+          `✖ POLICY FAILED: Found ${report.policyResult.violations.length} policy violation(s):`,
+        ),
+      ),
+    );
     for (const v of report.policyResult.violations) {
       lines.push(`   - ${pc.red(v.message)} ${pc.dim(`(Rule: ${v.rule})`)}`);
     }
@@ -138,7 +156,9 @@ export function formatSinglePackageTerminal(result: DependencyHealthResult): str
   lines.push(`Maintenance Risk : ${getRiskBadge(result.maintenanceRisk)}`);
   lines.push(`Health Score     : ${getScoreText(result.score)} / 100`);
   lines.push(`Confidence       : ${(result.confidence * 100).toFixed(0)}%`);
-  lines.push(`Lifecycle Status : ${result.isMatureStable ? pc.green('Mature-Stable') : pc.cyan('Active/Emerging')}`);
+  lines.push(
+    `Lifecycle Status : ${result.isMatureStable ? pc.green('Mature-Stable') : pc.cyan('Active/Emerging')}`,
+  );
   lines.push('');
   lines.push(pc.bold('Evidence Audit Trail:'));
 
@@ -151,7 +171,8 @@ export function formatSinglePackageTerminal(result: DependencyHealthResult): str
           ? pc.yellow('⚠')
           : pc.dim('•');
 
-    const delta = ev.contribution !== 0 ? ` (${ev.contribution > 0 ? '+' : ''}${ev.contribution})` : '';
+    const delta =
+      ev.contribution !== 0 ? ` (${ev.contribution > 0 ? '+' : ''}${ev.contribution})` : '';
     lines.push(`  ${symbol} [${ev.signal}] ${ev.explanation}${delta}`);
   }
 

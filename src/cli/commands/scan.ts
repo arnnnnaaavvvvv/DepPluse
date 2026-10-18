@@ -12,6 +12,8 @@ import type { MaintenanceRisk } from '../../core/types.js';
 export interface ScanCliOptions {
   format?: 'terminal' | 'json' | 'markdown' | undefined;
   failOn?: string | undefined;
+  direct?: boolean | undefined;
+  directOnly?: boolean | undefined;
   noCache?: boolean | undefined;
   output?: string | undefined;
   config?: string | undefined;
@@ -63,7 +65,9 @@ export async function handleScanCommand(
     const validRisks = new Set(['low', 'medium', 'high', 'critical', 'unknown']);
     for (const r of risks) {
       if (!validRisks.has(r)) {
-        throw new UsageError(`Invalid --fail-on risk level '${r}'. Allowed: low, medium, high, critical, unknown`);
+        throw new UsageError(
+          `Invalid --fail-on risk level '${r}'. Allowed: low, medium, high, critical, unknown`,
+        );
       }
     }
     config = {
@@ -78,6 +82,7 @@ export async function handleScanCommand(
   const engine = new DepPulseEngine(config);
   const report = await engine.scan(targetPath, {
     noCache: options.noCache,
+    directOnly: Boolean(options.direct || options.directOnly),
   });
 
   let formatted = '';

@@ -1,6 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ResilientHttpClient, redactTokens } from '../../../src/providers/http/client.js';
-import { ProviderNetworkError, RateLimitExceededError, SSRFProtectionError } from '../../../src/core/errors.js';
+import {
+  ProviderNetworkError,
+  RateLimitExceededError,
+  SSRFProtectionError,
+} from '../../../src/core/errors.js';
 
 describe('Resilient HTTP Client & Security Controls', () => {
   const originalFetch = globalThis.fetch;
@@ -86,7 +90,8 @@ describe('Resilient HTTP Client & Security Controls', () => {
   });
 
   it('redacts tokens and credentials in error messages', () => {
-    const rawError = 'Failed request with token ghp_1234567890123456789012345 and npm_123456789012345678901234567890123456';
+    const rawError =
+      'Failed request with token ghp_1234567890123456789012345 and npm_123456789012345678901234567890123456';
     const redacted = redactTokens(rawError);
     expect(redacted).not.toContain('ghp_1234567890');
     expect(redacted).not.toContain('npm_1234567890');
@@ -111,9 +116,33 @@ describe('Resilient HTTP Client & Security Controls', () => {
       }),
     );
 
-    const client = new ResilientHttpClient({ maxRetries: 0 });
+    const client = new ResilientHttpClient({ maxRetries: 0, maxResponseBytes: 10 * 1024 * 1024 });
     await expect(client.getJson('https://registry.npmjs.org/huge-pkg')).rejects.toThrow(
       ProviderNetworkError,
     );
+  });
+
+  it('executes POST JSON requests with deduplication and SSRF safety', async () => {
+    let calledMethod = '';
+    let calledBody = '';
+    globalThis.fetch = vi.fn().mockImplementation(async (_url, init) => {
+      calledMethod = init.method;
+      calledBody = init.body;
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    });
+
+    const client = new ResilientHttpClient({ maxRetries: 0 });
+    const payload = { package: { name: 'express', ecosystem: 'npm' } };
+    const res = await client.postJson<{ success: boolean }>(
+      'https://api.osv.dev/v1/query',
+      payload,
+    );
+
+    expect(res).toEqual({ success: true });
+    expect(calledMethod).toBe('POST');
+    expect(calledBody).toBe(JSON.stringify(payload));
   });
 });

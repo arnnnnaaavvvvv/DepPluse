@@ -73,4 +73,50 @@ describe('CLI Commands & Exit Code Mapping', () => {
       await fs.rm(tmpDir, { recursive: true, force: true });
     }
   });
+
+  it('executes direct-only scan successfully with --direct option', async () => {
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'deppulse-cli-direct-'));
+    const manifest = {
+      name: 'direct-test',
+      dependencies: {
+        'direct-pkg': '^1.0.0',
+      },
+    };
+    const lockfile = {
+      name: 'direct-test',
+      lockfileVersion: 3,
+      packages: {
+        '': { name: 'direct-test', dependencies: { 'direct-pkg': '^1.0.0' } },
+        'node_modules/direct-pkg': { version: '1.0.0' },
+        'node_modules/transitive-pkg': { version: '2.0.0' },
+      },
+    };
+    await fs.writeFile(path.join(tmpDir, 'package.json'), JSON.stringify(manifest));
+    await fs.writeFile(path.join(tmpDir, 'package-lock.json'), JSON.stringify(lockfile));
+
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = vi.fn().mockImplementation(async () => {
+      return new Response(
+        JSON.stringify({
+          name: 'direct-pkg',
+          'dist-tags': { latest: '1.0.0' },
+          versions: { '1.0.0': { version: '1.0.0' } },
+          time: { '1.0.0': new Date().toISOString() },
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    });
+
+    try {
+      const exitCode = await handleScanCommand(tmpDir, {
+        direct: true,
+        noCache: true,
+        format: 'json',
+      });
+      expect(exitCode).toBe(0);
+    } finally {
+      globalThis.fetch = originalFetch;
+      await fs.rm(tmpDir, { recursive: true, force: true });
+    }
+  });
 });

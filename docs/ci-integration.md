@@ -4,11 +4,11 @@ DepPulse is designed for seamless, safe execution in Continuous Integration envi
 
 ## Exit Codes
 
-| Exit Code | Meaning | Cause | Recommended CI Action |
-| :--- | :--- | :--- | :--- |
-| **0** | **Passed** | All dependencies satisfy configured health policies. | Build succeeds. |
-| **1** | **Policy Violation** | One or more packages breached policy (e.g. `--fail-on critical`). | Block PR merge; review maintenance alerts. |
-| **2** | **Analysis / Usage Error** | Network failure, missing manifest, or invalid command arguments. | Fix syntax or check network connectivity. |
+| Exit Code | Meaning                    | Cause                                                             | Recommended CI Action                      |
+| :-------- | :------------------------- | :---------------------------------------------------------------- | :----------------------------------------- |
+| **0**     | **Passed**                 | All dependencies satisfy configured health policies.              | Build succeeds.                            |
+| **1**     | **Policy Violation**       | One or more packages breached policy (e.g. `--fail-on critical`). | Block PR merge; review maintenance alerts. |
+| **2**     | **Analysis / Usage Error** | Network failure, missing manifest, or invalid command arguments.  | Fix syntax or check network connectivity.  |
 
 ---
 
@@ -57,14 +57,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npx deppulse scan --format terminal --fail-on critical --output deppulse-report.txt
+          npx @arnavvv/deppulse scan --format terminal --fail-on critical --output deppulse-report.txt
 
       - name: Generate PR Markdown Report
         if: failure() && github.event_name == 'pull_request'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npx deppulse scan --format markdown --output deppulse-summary.md
+          npx @arnavvv/deppulse scan --format markdown --output deppulse-summary.md
           gh pr comment ${{ github.event.pull_request.number }} --body-file deppulse-summary.md
 ```
 

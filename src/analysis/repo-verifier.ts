@@ -16,7 +16,10 @@ export function parseGitHubRepoUrl(rawUrl: string | undefined): ParsedRepoInfo |
 
   // Shorthand e.g. "github:foo/bar"
   if (trimmed.startsWith('github:')) {
-    const parts = trimmed.slice('github:'.length).replace(/\.git$/, '').split('/');
+    const parts = trimmed
+      .slice('github:'.length)
+      .replace(/\.git$/, '')
+      .split('/');
     if (parts.length === 2 && parts[0] && parts[1]) {
       return { owner: parts[0], repo: parts[1] };
     }
@@ -57,7 +60,11 @@ export function verifyRepoIdentity(
   const pkgLower = cleanPkgName.toLowerCase();
 
   // Exact match between package name and repo name
-  if (cleanRepoName === pkgLower || cleanRepoName === `node-${pkgLower}` || cleanRepoName === `${pkgLower}.js`) {
+  if (
+    cleanRepoName === pkgLower ||
+    cleanRepoName === `node-${pkgLower}` ||
+    cleanRepoName === `${pkgLower}.js`
+  ) {
     return { associationStatus: 'verified' };
   }
 

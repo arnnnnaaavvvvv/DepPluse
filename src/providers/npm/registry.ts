@@ -1,6 +1,7 @@
 import type { PackageMetadata } from '../../core/types.js';
 import type { CacheStore, NpmRegistryProvider, RequestOptions } from '../types.js';
 import type { ResilientHttpClient } from '../http/client.js';
+import semver from 'semver';
 
 interface RawPackumentVersion {
   name: string;
@@ -59,8 +60,22 @@ export class DefaultNpmRegistryProvider implements NpmRegistryProvider {
       timeoutMs: options.timeoutMs,
     });
 
-    const latestVersion = raw['dist-tags']?.['latest'] ?? Object.keys(raw.versions ?? {}).pop() ?? '0.0.0';
-    const chosenVersion = targetVersion && raw.versions?.[targetVersion] ? targetVersion : latestVersion;
+    const allVersions = Object.keys(raw.versions ?? {});
+    const latestVersion =
+      raw['dist-tags']?.['latest'] ?? allVersions[allVersions.length - 1] ?? '0.0.0';
+    let chosenVersion = latestVersion;
+
+    if (targetVersion) {
+      if (raw.versions?.[targetVersion]) {
+        chosenVersion = targetVersion;
+      } else {
+        const satisfied = semver.maxSatisfying(allVersions, targetVersion);
+        if (satisfied && raw.versions?.[satisfied]) {
+          chosenVersion = satisfied;
+        }
+      }
+    }
+
     const versionObj = raw.versions?.[chosenVersion] ?? Object.values(raw.versions ?? {})[0];
 
     const versionsTime: Record<string, string> = {};
@@ -86,7 +101,8 @@ export class DefaultNpmRegistryProvider implements NpmRegistryProvider {
           : undefined;
 
     const hasProvenance = Boolean(
-      versionObj?.dist?.attestations?.provenance || (versionObj?.dist?.signatures && versionObj.dist.signatures.length > 0),
+      versionObj?.dist?.attestations?.provenance ||
+      (versionObj?.dist?.signatures && versionObj.dist.signatures.length > 0),
     );
 
     const isDeprecated = Boolean(versionObj?.deprecated);
