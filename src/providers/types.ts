@@ -47,5 +47,6 @@ export interface AdvisoryProvider {
     packageName: string,
     version: string,
     options?: RequestOptions,
+    ecosystem?: SupportedEcosystem,
   ): Promise<readonly ContextualAdvisory[]>;
 }

@@ -92,12 +92,18 @@ export function scoreDependencyHealth(
 
   // 4. Contextual Advisories (Strictly 0 score contribution)
   if (contextualAdvisories.length > 0) {
+    const ids = contextualAdvisories
+      .map(a => `${a.advisoryId} [${a.severity.toUpperCase()}]`)
+      .join(', ');
     evidence.push({
       signal: 'advisory_context',
-      observedValue: { advisoryCount: contextualAdvisories.length },
+      observedValue: {
+        advisoryCount: contextualAdvisories.length,
+        advisories: contextualAdvisories.map(a => a.advisoryId),
+      },
       source: 'advisory',
       observedAt: new Date().toISOString(),
-      explanation: `${contextualAdvisories.length} security advisory/advisories noted for contextual awareness (separate from maintenance score).`,
+      explanation: `${contextualAdvisories.length} security advisory/advisories detected: ${ids}`,
       contribution: 0,
     });
   }

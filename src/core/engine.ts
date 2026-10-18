@@ -121,6 +121,7 @@ export class DepPulseEngine {
               dep.name,
               pkgMeta.version || dep.resolvedVersion,
               requestOptions,
+              dep.ecosystem,
             );
           } catch {
             // Advisories are non-blocking
@@ -209,8 +210,12 @@ export class DepPulseEngine {
     let unkCount = 0;
     let scoreSum = 0;
     let scoredCount = 0;
+    let totalVulns = 0;
 
     for (const r of results) {
+      if (r.contextualAdvisories) {
+        totalVulns += r.contextualAdvisories.length;
+      }
       switch (r.maintenanceRisk) {
         case 'low':
           lowCount++;
@@ -241,6 +246,7 @@ export class DepPulseEngine {
       criticalRisk: critCount,
       unknownRisk: unkCount,
       averageScore: scoredCount > 0 ? Math.round(scoreSum / scoredCount) : null,
+      totalVulnerabilities: totalVulns,
     };
 
     const policyResult = evaluatePolicy(results, {
@@ -293,7 +299,12 @@ export class DepPulseEngine {
     );
     let advisories: readonly ContextualAdvisory[] = [];
     try {
-      advisories = await this.advisoryProvider.getAdvisories(cleanPkgName, resolvedVersion);
+      advisories = await this.advisoryProvider.getAdvisories(
+        cleanPkgName,
+        resolvedVersion,
+        {},
+        targetEcosystem,
+      );
     } catch {
       // non-blocking
     }

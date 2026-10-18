@@ -130,6 +130,9 @@ export interface ContextualAdvisory {
   readonly title: string;
   readonly severity: 'low' | 'moderate' | 'high' | 'critical';
   readonly url: string;
+  readonly packageName?: string | undefined;
+  readonly packageVersion?: string | undefined;
+  readonly cveId?: string | undefined;
 }
 
 export interface DependencyHealthResult {
@@ -189,6 +192,7 @@ export interface ReportSummary {
   readonly criticalRisk: number;
   readonly unknownRisk: number;
   readonly averageScore: number | null;
+  readonly totalVulnerabilities?: number | undefined;
 }
 
 export interface Report {

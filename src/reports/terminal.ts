@@ -1,5 +1,11 @@
 import pc from 'picocolors';
-import type { DependencyHealthResult, MaintenanceRisk, Report } from '../core/types.js';
+import type {
+  ContextualAdvisory,
+  DependencyHealthResult,
+  DependencyRecord,
+  MaintenanceRisk,
+  Report,
+} from '../core/types.js';
 
 function getRiskBadge(risk: MaintenanceRisk): string {
   switch (risk) {
@@ -13,6 +19,22 @@ function getRiskBadge(risk: MaintenanceRisk): string {
       return pc.green(pc.bold('LOW'));
     case 'unknown':
       return pc.dim('UNKNOWN');
+  }
+}
+
+function getAdvisoryBadge(severity: string): string {
+  switch (severity.toLowerCase()) {
+    case 'critical':
+      return pc.bgRed(pc.white(pc.bold(' CRITICAL ')));
+    case 'high':
+      return pc.bgYellow(pc.black(pc.bold(' HIGH ')));
+    case 'moderate':
+    case 'medium':
+      return pc.yellow(pc.bold('MODERATE'));
+    case 'low':
+      return pc.cyan(pc.bold('LOW'));
+    default:
+      return pc.dim('ADVISORY');
   }
 }
 
@@ -35,7 +57,7 @@ export function formatTerminalReport(
   lines.push(
     pc.bold(pc.cyan('DepPulse')) +
       ' ' +
-      pc.dim('v0.1.1 – Dependency Health & Maintenance Intelligence'),
+      pc.dim('v0.2.0 – Universal Dependency Health & Maintenance Intelligence'),
   );
   lines.push(pc.dim('─'.repeat(70)));
 
@@ -52,6 +74,16 @@ export function formatTerminalReport(
   );
   lines.push('');
 
+  // Collect all vulnerabilities across all packages
+  const allAdvisories: Array<{ dep: DependencyRecord; advisory: ContextualAdvisory }> = [];
+  for (const item of report.results) {
+    if (item.contextualAdvisories && item.contextualAdvisories.length > 0) {
+      for (const adv of item.contextualAdvisories) {
+        allAdvisories.push({ dep: item.dependency, advisory: adv });
+      }
+    }
+  }
+
   // Summary Metrics Bar
   const s = report.summary;
   const summaryBadges = [
@@ -60,6 +92,9 @@ export function formatTerminalReport(
     s.mediumRisk > 0 ? pc.yellow(`Medium: ${s.mediumRisk}`) : pc.dim(`Medium: 0`),
     pc.green(`Low (Healthy): ${s.lowRisk}`),
     s.unknownRisk > 0 ? pc.dim(`Unknown: ${s.unknownRisk}`) : null,
+    allAdvisories.length > 0
+      ? pc.bgRed(pc.white(pc.bold(` ${allAdvisories.length} Vulnerabilities `)))
+      : pc.dim('Vulnerabilities: 0'),
   ]
     .filter(Boolean)
     .join(pc.dim(' | '));
@@ -71,14 +106,18 @@ export function formatTerminalReport(
   lines.push(pc.dim('─'.repeat(70)));
 
   // Filter items to show:
-  // If verbose: all. Otherwise: critical, high, medium, and unknown
+  // If verbose: all. Otherwise: critical, high, medium, unknown, OR any package carrying security advisories
   const itemsToShow = options.verbose
     ? report.results
-    : report.results.filter(r => r.maintenanceRisk !== 'low');
+    : report.results.filter(
+        r =>
+          r.maintenanceRisk !== 'low' ||
+          (r.contextualAdvisories && r.contextualAdvisories.length > 0),
+      );
 
   if (itemsToShow.length > 0) {
     lines.push('');
-    lines.push(pc.bold('Actionable Maintenance Alerts:'));
+    lines.push(pc.bold('Actionable Maintenance Alerts & Flagged Dependencies:'));
     lines.push('');
 
     for (const item of itemsToShow) {
@@ -90,19 +129,29 @@ export function formatTerminalReport(
       lines.push(`  ${badge}  ${pc.bold(dep.id)} ${directTag} Score: ${scoreStr}`);
 
       // Print primary explanation from evidence
-      const significantEvidence = item.evidence.filter(
-        e => e.contribution < 0 || e.isFatalCap || e.signal === 'advisory_context',
-      );
+      const significantEvidence = item.evidence.filter(e => e.contribution < 0 || e.isFatalCap);
 
       for (const ev of significantEvidence) {
         if (ev.isFatalCap) {
           lines.push(`     ${pc.red('✖')} ${ev.explanation}`);
         } else if (ev.contribution < 0) {
           lines.push(`     ${pc.yellow('⚠')} ${ev.explanation} (${ev.contribution})`);
-        } else if (ev.signal === 'advisory_context') {
-          lines.push(`     ${pc.dim('ℹ Context: ' + ev.explanation)}`);
         }
       }
+
+      // Print itemized security advisories for this package
+      if (item.contextualAdvisories && item.contextualAdvisories.length > 0) {
+        lines.push(
+          `     ${pc.magenta(pc.bold(`🛡 Security Vulnerabilities (${item.contextualAdvisories.length}):`))}`,
+        );
+        for (const adv of item.contextualAdvisories) {
+          const advBadge = getAdvisoryBadge(adv.severity);
+          const cveTag = adv.cveId ? pc.dim(` [${adv.cveId}]`) : '';
+          lines.push(`       ${advBadge} ${pc.bold(adv.advisoryId)}${cveTag}: ${adv.title}`);
+          lines.push(`          ${pc.dim('Advisory: ' + adv.url)}`);
+        }
+      }
+
       lines.push('');
     }
   } else {
@@ -113,6 +162,36 @@ export function formatTerminalReport(
       ),
     );
     lines.push('');
+  }
+
+  // Dedicated Complete Security Vulnerabilities Section
+  if (allAdvisories.length > 0) {
+    lines.push(pc.dim('─'.repeat(70)));
+    lines.push(
+      pc.bold(
+        pc.red(
+          `🛡 Security Vulnerabilities & Advisories (${allAdvisories.length} detected across project):`,
+        ),
+      ),
+    );
+    lines.push(pc.dim('─'.repeat(70)));
+
+    const severityOrder: Record<string, number> = { critical: 4, high: 3, moderate: 2, low: 1 };
+    const sortedAdvisories = [...allAdvisories].sort(
+      (a, b) =>
+        (severityOrder[b.advisory.severity] ?? 0) - (severityOrder[a.advisory.severity] ?? 0),
+    );
+
+    for (const { dep, advisory } of sortedAdvisories) {
+      const advBadge = getAdvisoryBadge(advisory.severity);
+      const directTag = dep.isDirect ? pc.cyan('[direct]') : pc.dim('[transitive]');
+      const cveTag = advisory.cveId ? pc.dim(` (${advisory.cveId})`) : '';
+
+      lines.push(`  ${advBadge}  ${pc.bold(dep.id)} ${directTag}`);
+      lines.push(`     • ${pc.bold(advisory.advisoryId)}${cveTag}: ${advisory.title}`);
+      lines.push(`       ${pc.dim('Advisory Link: ' + advisory.url)}`);
+      lines.push('');
+    }
   }
 
   // Policy Outcome
@@ -159,6 +238,21 @@ export function formatSinglePackageTerminal(result: DependencyHealthResult): str
   lines.push(
     `Lifecycle Status : ${result.isMatureStable ? pc.green('Mature-Stable') : pc.cyan('Active/Emerging')}`,
   );
+
+  // If contextual advisories exist, display them with badges and links
+  if (result.contextualAdvisories && result.contextualAdvisories.length > 0) {
+    lines.push('');
+    lines.push(
+      pc.bold(pc.red(`Security Vulnerabilities (${result.contextualAdvisories.length} detected):`)),
+    );
+    for (const adv of result.contextualAdvisories) {
+      const advBadge = getAdvisoryBadge(adv.severity);
+      const cveTag = adv.cveId ? pc.dim(` [${adv.cveId}]`) : '';
+      lines.push(`  ${advBadge} ${pc.bold(adv.advisoryId)}${cveTag}: ${adv.title}`);
+      lines.push(`     ${pc.dim('Advisory: ' + adv.url)}`);
+    }
+  }
+
   lines.push('');
   lines.push(pc.bold('Evidence Audit Trail:'));
 

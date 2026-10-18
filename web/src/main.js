@@ -73,7 +73,7 @@ const terminalOutputs = {
 <div class="term-line"><span class="term-prompt">$</span><span class="term-cmd">deppulse scan .</span></div>
 <div class="term-line term-dim">Scanning dependencies in package.json & package-lock.json...</div>
 <div class="term-line">&nbsp;</div>
-<div class="term-line term-head">DepPulse v0.1.1 – Dependency Health & Maintenance Intelligence</div>
+<div class="term-line term-head">DepPulse v0.2.0 – Universal Dependency Health & Maintenance Intelligence</div>
 <div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
 <div class="term-line">Manifest: <span class="term-cyan">package.json</span> (npm-v3, coverage: <span class="term-low">full</span>)</div>
 <div class="term-line">Scanned: <span class="term-head">228 dependencies</span> (14 direct, 214 transitive, 0 skipped)</div>
@@ -96,6 +96,17 @@ const terminalOutputs = {
 <div class="term-line">&nbsp;</div>
 <div class="term-line"><span class="term-medium">MEDIUM</span> <span class="term-cmd">concat-map@0.0.1</span> <span class="term-dim">[transitive]</span> Score: <span class="term-medium">75</span></div>
 <div class="term-line term-yellow">&nbsp;&nbsp;⚠ Stagnant release cadence: no published releases in 4643 days (&gt;2 years). (-25)</div>
+<div class="term-line">&nbsp;</div>
+<div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
+<div class="term-line term-critical term-bold">🛡 Security Vulnerabilities & Advisories (2 detected across project):</div>
+<div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
+<div class="term-line"><span class="term-critical">CRITICAL</span> <span class="term-cmd">tinypool@1.1.1</span> <span class="term-dim">[transitive]</span></div>
+<div class="term-line term-dim">&nbsp;&nbsp;• <span class="term-head">GHSA-5gmw-xhrv-c9v3</span> (CVE-2026-104848): Prototype Pollution gadget in worker options leads to RCE</div>
+<div class="term-line term-cyan">&nbsp;&nbsp;&nbsp;&nbsp;Advisory: https://osv.dev/vulnerability/GHSA-5gmw-xhrv-c9v3</div>
+<div class="term-line">&nbsp;</div>
+<div class="term-line"><span class="term-critical">CRITICAL</span> <span class="term-cmd">tinypool@1.1.1</span> <span class="term-dim">[transitive]</span></div>
+<div class="term-line term-dim">&nbsp;&nbsp;• <span class="term-head">GHSA-85c8-ppgw-ccpr</span> (CVE-2026-104849): Prototype Pollution Gadget to RCE in run() options</div>
+<div class="term-line term-cyan">&nbsp;&nbsp;&nbsp;&nbsp;Advisory: https://osv.dev/vulnerability/GHSA-85c8-ppgw-ccpr</div>
 <div class="term-line">&nbsp;</div>
 <div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
 <div class="term-line term-danger-bold">✖ POLICY FAILED: Found 3 policy violation(s):</div>

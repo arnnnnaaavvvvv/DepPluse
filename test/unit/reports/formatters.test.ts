@@ -130,4 +130,40 @@ describe('Report Formatters', () => {
     expect(output).toContain('Evidence Audit Trail:');
     expect(output).toContain('[deprecation]');
   });
+
+  it('formats itemized security vulnerabilities in terminal and markdown reports', () => {
+    const reportWithVulns: Report = {
+      ...dummyReport,
+      results: [
+        {
+          ...dummyReport.results[0]!,
+          contextualAdvisories: [
+            {
+              advisoryId: 'GHSA-5gmw-xhrv-c9v3',
+              title: 'Tinypool: Prototype Pollution in worker options',
+              severity: 'critical',
+              url: 'https://osv.dev/vulnerability/GHSA-5gmw-xhrv-c9v3',
+              cveId: 'CVE-2024-12345',
+            },
+          ],
+        },
+        dummyReport.results[1]!,
+      ],
+    };
+
+    const termRaw = formatTerminalReport(reportWithVulns);
+    const termClean = stripAnsi(termRaw);
+    expect(termClean).toContain(
+      'Security Vulnerabilities & Advisories (1 detected across project)',
+    );
+    expect(termClean).toContain('GHSA-5gmw-xhrv-c9v3');
+    expect(termClean).toContain('Tinypool: Prototype Pollution in worker options');
+    expect(termClean).toContain('https://osv.dev/vulnerability/GHSA-5gmw-xhrv-c9v3');
+
+    const md = formatMarkdownReport(reportWithVulns);
+    expect(md).toContain('### 🛡️ Security Vulnerabilities & Advisories');
+    expect(md).toContain('GHSA-5gmw-xhrv-c9v3');
+    expect(md).toContain('CVE-2024-12345');
+    expect(md).toContain('Tinypool: Prototype Pollution in worker options');
+  });
 });
