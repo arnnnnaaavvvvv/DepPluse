@@ -9,3 +9,5 @@ coverage/
 .deppulse/
 *.tmp*
 web/dist/
+
+.vercel
