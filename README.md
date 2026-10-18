@@ -3,7 +3,7 @@
 > **Universal dependency maintenance health and upgrade risk intelligence across every programming language.**  
 > Know which third-party packages are actively maintained, abandoned, or quietly archived—backed by verifiable registry telemetry, calibrated mature-package awareness, multi-ecosystem runtime checks, and zero speculative guesswork.
 
-[![CI Status](https://github.com/arnnnnaaavvvvv/DepPlus/actions/workflows/ci.yml/badge.svg)](https://github.com/arnnnnaaavvvvv/DepPlus/actions)
+[![CI Status](https://github.com/arnnnnaaavvvvv/DepPluse/actions/workflows/ci.yml/badge.svg)](https://github.com/arnnnnaaavvvvv/DepPluse/actions)
 [![npm version](https://img.shields.io/badge/npm-v0.2.0-cb3837?logo=npm)](https://www.npmjs.com/package/@arnavvv/deppulse)
 [![Ecosystems](https://img.shields.io/badge/Ecosystems-Python%20%7C%20Rust%20%7C%20Go%20%7C%20Ruby%20%7C%20PHP%20%7C%20JVM%20%7C%20.NET%20%7C%20Node-blueviolet)](#supported-ecosystems)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg?logo=node.js)](https://nodejs.org)
@@ -892,7 +892,7 @@ npm run format
 
 - **Arnav Singh** — _Lead Architect & Author_ — [@arnnnnaaavvvvv](https://github.com/arnnnnaaavvvvv)
 
-Contributions, feature requests, and issue reports are welcome via [GitHub Issues](https://github.com/arnnnnaaavvvvv/DepPlus/issues).
+Contributions, feature requests, and issue reports are welcome via [GitHub Issues](https://github.com/arnnnnaaavvvvv/DepPluse/issues).
 
 ---
 

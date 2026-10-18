@@ -548,7 +548,7 @@ function updateConfigJson() {
 
   const configObj = {
     $schema:
-      'https://raw.githubusercontent.com/arnnnnaaavvvvv/DepPlus/main/docs/config.schema.json',
+      'https://raw.githubusercontent.com/arnnnnaaavvvvv/DepPluse/main/docs/config.schema.json',
     version: '1.0.0',
     policy: {
       failOnRisk: failRiskValues,
