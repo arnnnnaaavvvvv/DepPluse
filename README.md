@@ -1,10 +1,11 @@
 # DepPulse
 
-> **Deterministic dependency maintenance health and upgrade risk intelligence for Node.js.**  
-> Know which third-party packages are actively maintained, abandoned, or quietly archived—backed by verifiable telemetry, calibrated mature-package awareness, and zero speculative guesswork.
+> **Universal dependency maintenance health and upgrade risk intelligence across every programming language.**  
+> Know which third-party packages are actively maintained, abandoned, or quietly archived—backed by verifiable registry telemetry, calibrated mature-package awareness, multi-ecosystem runtime checks, and zero speculative guesswork.
 
 [![CI Status](https://github.com/arnnnnaaavvvvv/DepPlus/actions/workflows/ci.yml/badge.svg)](https://github.com/arnnnnaaavvvvv/DepPlus/actions)
-[![npm version](https://img.shields.io/npm/v/@arnavvv/deppulse?color=cb3837&logo=npm)](https://www.npmjs.com/package/@arnavvv/deppulse)
+[![npm version](https://img.shields.io/badge/npm-v0.2.0-cb3837?logo=npm)](https://www.npmjs.com/package/@arnavvv/deppulse)
+[![Ecosystems](https://img.shields.io/badge/Ecosystems-Python%20%7C%20Rust%20%7C%20Go%20%7C%20Ruby%20%7C%20PHP%20%7C%20JVM%20%7C%20.NET%20%7C%20Node-blueviolet)](#supported-ecosystems)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg?logo=node.js)](https://nodejs.org)
 [![TypeScript Strict](https://img.shields.io/badge/TypeScript-Strict%20NodeNext-blue.svg?logo=typescript)](https://www.typescriptlang.org)
 [![Live Interactive Dashboard](https://img.shields.io/badge/Live%20Demo-DepPlus.vercel.app-7928ca?logo=vercel)](https://DepPlus.vercel.app)
@@ -14,37 +15,57 @@
 
 ## Overview
 
-**DepPulse** is a production-grade developer tool and decoupled TypeScript analysis engine that audits the maintenance health and upgrade risks of third-party Node.js dependencies across direct and transitive trees. Built for platform engineers, security teams, and engineering leads who cannot afford to let abandoned, archived, or runtime-incompatible packages accumulate silently in mission-critical applications, DepPulse replaces subjective metrics and noisy alert firehoses with a deterministic, calibrated 0–100 scoring model. Unlike standard vulnerability scanners or semver checkers, DepPulse evaluates real-world upstream maintenance signals—including release timelines, active Node.js LTS compatibility, and cryptographic repository provenance—while explicitly protecting "done" mature utilities from naive inactivity penalties.
+**DepPulse** is a production-grade universal developer tool and decoupled TypeScript analysis engine that audits the maintenance health and upgrade risks of third-party dependencies across **all major programming language ecosystems**. Built for platform engineers, security teams, and engineering leads who cannot afford to let abandoned, archived, or runtime-incompatible packages accumulate silently in mission-critical applications, DepPulse replaces subjective metrics and noisy alert firehoses with a deterministic, calibrated 0–100 scoring model.
+
+Whether you run **Python (PyPI)**, **Rust (Crates.io)**, **Go (Modules)**, **Ruby (RubyGems)**, **PHP (Packagist)**, **Java/JVM (Maven & Gradle)**, **.NET (NuGet)**, or **Node.js (npm)**, DepPulse evaluates real-world upstream maintenance signals—including release timelines, runtime compatibility, repository health, and cryptographic provenance—while explicitly protecting "done" mature utilities from naive inactivity penalties.
+
+---
+
+## Supported Ecosystems
+
+DepPulse natively detects, parses, and resolves dependencies across 8 distinct package managers and registries:
+
+| Language / Ecosystem     | Manifest Files                                | Lockfiles                                          | Default Upstream Registry                   | Runtime Compatibility Checks              |
+| :----------------------- | :-------------------------------------------- | :------------------------------------------------- | :------------------------------------------ | :---------------------------------------- |
+| **Python** (`pypi`)      | `requirements.txt`, `pyproject.toml`          | `poetry.lock`                                      | [PyPI](https://pypi.org)                    | Python $\ge 3.10$ LTS compatibility       |
+| **Rust** (`crates`)      | `Cargo.toml`                                  | `Cargo.lock`                                       | [Crates.io](https://crates.io)              | Minimum Supported Rust Version (MSRV)     |
+| **Go** (`golang`)        | `go.mod`                                      | `go.sum`                                           | [Go Module Proxy](https://proxy.golang.org) | Go runtime / indirect dependency tracking |
+| **Ruby** (`rubygems`)    | `Gemfile`                                     | `Gemfile.lock`                                     | [RubyGems](https://rubygems.org)            | Ruby runtime version requirements         |
+| **PHP** (`packagist`)    | `composer.json`                               | `composer.lock`                                    | [Packagist](https://packagist.org)          | PHP runtime version constraints           |
+| **Java / JVM** (`maven`) | `pom.xml`, `build.gradle`, `build.gradle.kts` | Gradle lockfiles                                   | [Maven Central](https://search.maven.org)   | Java SE runtime specification             |
+| **.NET** (`nuget`)       | `.csproj`, `packages.config`                  | `packages.lock.json`                               | [NuGet Gallery](https://api.nuget.org)      | Target Framework Monikers (.NET / Core)   |
+| **Node.js** (`npm`)      | `package.json`                                | `package-lock.json` (v1–v3), `npm-shrinkwrap.json` | [npm Registry](https://registry.npmjs.org)  | Node.js Active LTS (18, 20, 22)           |
 
 ---
 
 ## Feature Matrix
 
-| Feature                                        | Description                                                                                                                                                                         |
-| :--------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Deterministic 0–100 Health Scoring**         | Computes a transparent, reproducible health score based on published telemetry and versioned mathematical rules without black-box ML or subjective ratings.                         |
-| **"Done" vs. "Dead" Maturity Calibration**     | Distinguishes feature-complete, rock-solid utilities (e.g., `wrappy`, `mime-types`) from abandoned codebases by calibrating age ($\ge 4$ years) against lifetime release stability. |
-| **Non-Linear Fatal Score Caps**                | Halts score accumulation upon detecting irreversible risk signals (deprecation caps at $\le 20$, archived GitHub repos cap at $\le 25$, divergent provenance caps at $\le 30$).     |
-| **Node.js LTS Compatibility Matrix**           | Assesses package `engines.node` declarations against active LTS release lines (Node.js 18, 20, 22), flagging packages incompatible with current production environments.            |
-| **Cryptographic Provenance & Anti-Spoofing**   | Cross-validates claimed repository coordinates against npm registry metadata and sigstore build provenance to detect spoofed monorepo URLs.                                         |
-| **Decoupled Advisory Isolation**               | Ingests CVE and advisory data purely as contextual awareness annotations; security alerts contribute exactly **0 points** to maintenance score calculation.                         |
-| **Full Transitive Lockfile Resolution**        | Parses `package-lock.json` (v1, v2, v3) and `npm-shrinkwrap.json` to uncover deeply nested maintenance debt down through transitive layers.                                         |
-| **Resilient Network & SSRF Defense**           | Features jittered exponential backoff, rate-limit adaptation, protocol allowlists, and loopback/cloud-metadata blocking (`169.254.169.254`, `127.0.0.1`).                           |
-| **Strict Read-Only Verification**              | Guarantees zero disk writes to target project manifests, zero lockfile mutations, and zero execution of arbitrary lifecycle scripts (`postinstall`).                                |
-| **CI Policy Gatekeeper & Exit Code Mapping**   | Enforces customizable quality gates (`failOnRisk`, `maxHighRiskAllowed`, time-bounded `allowList` exceptions) with standard Unix exit codes (0, 1, 2).                              |
-| **Interactive Terminal Simulator & Web Suite** | Deployed at [DepPlus.vercel.app](https://DepPlus.vercel.app) with an interactive CLI simulator, dynamic scoring playground, and visual config builder.                              |
+| Feature                                        | Description                                                                                                                                                                                    |
+| :--------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Universal Multi-Language Support**           | Seamlessly audits dependencies for Python, Rust, Go, Ruby, PHP, Java/JVM, .NET, and Node.js without needing multiple specialized tools.                                                        |
+| **Deterministic 0–100 Health Scoring**         | Computes a transparent, reproducible health score based on published telemetry and versioned mathematical rules without black-box ML or subjective ratings.                                    |
+| **"Done" vs. "Dead" Maturity Calibration**     | Distinguishes feature-complete, rock-solid utilities (e.g., `wrappy`, `mime-types`, `urllib3`) from abandoned codebases by calibrating age ($\ge 4$ years) against lifetime release stability. |
+| **Non-Linear Fatal Score Caps**                | Halts score accumulation upon detecting irreversible risk signals (deprecation caps at $\le 20$, archived GitHub repos cap at $\le 25$, divergent provenance caps at $\le 30$).                |
+| **Polyglot Runtime Compatibility Matrix**      | Evaluates engine declarations against active production runtimes: Node.js LTS (18/20/22), Python 3.10+, and Rust MSRV edition targets.                                                         |
+| **Cryptographic Provenance & Anti-Spoofing**   | Cross-validates claimed repository coordinates against registry metadata and sigstore build provenance to detect spoofed monorepo URLs.                                                        |
+| **Decoupled Advisory Isolation**               | Ingests CVE and advisory data purely as contextual awareness annotations; security alerts contribute exactly **0 points** to maintenance score calculation.                                    |
+| **Full Transitive & Direct Resolution**        | Parses manifests and lockfiles (`package-lock.json`, `poetry.lock`, `Cargo.lock`, `go.sum`, `Gemfile.lock`, `composer.lock`) to uncover nested maintenance debt.                               |
+| **Resilient Network & SSRF Defense**           | Features jittered exponential backoff, rate-limit adaptation, registry allowlists, and loopback/cloud-metadata blocking (`169.254.169.254`, `127.0.0.1`).                                      |
+| **Strict Read-Only Verification**              | Guarantees zero disk writes to target project manifests, zero lockfile mutations, and zero execution of arbitrary lifecycle scripts (`postinstall`, setup.py).                                 |
+| **CI Policy Gatekeeper & Exit Code Mapping**   | Enforces customizable quality gates (`failOnRisk`, `maxHighRiskAllowed`, time-bounded `allowList` exceptions) with standard Unix exit codes (0, 1, 2).                                         |
+| **Interactive Terminal Simulator & Web Suite** | Deployed at [DepPlus.vercel.app](https://DepPlus.vercel.app) with an interactive CLI simulator, dynamic scoring playground, and visual config builder.                                         |
 
 ---
 
 ## What It Can Do Now
 
-- **Audit full dependency trees**: Scans `package.json` manifests alongside `package-lock.json` v1/v2/v3 and `npm-shrinkwrap.json`, mapping direct and transitive packages.
-- **Surface fatal maintenance signals**: Instantly pinpoints deprecated packages, archived upstream repositories, and runtime-incompatible engine declarations.
+- **Audit polyglot dependency trees**: Scans Python (`requirements.txt`, `pyproject.toml`, `poetry.lock`), Rust (`Cargo.toml`, `Cargo.lock`), Go (`go.mod`, `go.sum`), Ruby (`Gemfile`, `Gemfile.lock`), PHP (`composer.json`, `composer.lock`), Java/JVM (`pom.xml`, `build.gradle`), .NET (`.csproj`, `packages.config`), and Node.js (`package.json`, `package-lock.json`).
+- **Surface fatal maintenance signals**: Instantly pinpoints deprecated packages, archived upstream repositories, and runtime-incompatible engine declarations across all ecosystems.
 - **Prevent naive false alarms**: Recognizes mature single-purpose packages that have not required patches for years, scoring them high if their runtime compatibility remains intact.
 - **Verify repository provenance**: Detects package spoofing attempts where an unknown package points its repository field to high-profile repositories like `facebook/react`.
 - **Enforce CI build policies**: Fails build pipelines with standard exit codes when dependencies cross configured risk thresholds (`critical`, `high`, `medium`, `unknown`).
 - **Support time-bounded exceptions**: Allows development teams to temporarily whitelist risky dependencies with mandatory justifications and ISO-8601 expiration dates.
-- **Operate fully offline from cache**: Caches packuments and GitHub metadata in `.deppulse/cache/` with an atomic two-tier cache (memory LRU + local disk store).
+- **Operate fully offline from cache**: Caches packuments and registry metadata in `.deppulse/cache/` with an atomic two-tier cache (memory LRU + local disk store).
 - **Export structured audit artifacts**: Generates ANSI terminal tables, schema-compliant JSON reports, or GitHub Flavored Markdown summaries for pull requests.
 
 ---
@@ -135,13 +156,23 @@ Tip: Review flagged dependencies in the report or add an exception with justific
 
 ## Usage Examples
 
-### 1. Project Scan (`scan`)
+### 1. Universal Project Scan (`scan`)
 
-Scans your project's manifests and lockfiles, resolves dependency trees, calculates health scores, and applies CI policies:
+Scans your project's manifests and lockfiles across any supported ecosystem, resolves dependency trees, calculates health scores, and applies CI policies:
 
 ```bash
-# Scan current directory using default terminal output
-deppulse scan
+# Scan current directory (auto-detects Python, Rust, Go, Ruby, PHP, Java, .NET, or Node.js)
+deppulse scan .
+
+# Scan specific manifest directly
+deppulse scan requirements.txt
+deppulse scan Cargo.toml
+deppulse scan go.mod
+
+# Explicitly declare language ecosystem
+deppulse scan ./service --ecosystem pypi
+deppulse scan ./backend --ecosystem crates
+deppulse scan ./api --ecosystem golang
 
 # Scan only direct dependencies (bypasses transitive lockfile parsing)
 deppulse scan --direct
@@ -155,24 +186,44 @@ deppulse scan --fail-on high --verbose
 
 ### 2. Single Package Analysis (`analyze`)
 
-Fetches package packuments, inspects release frequencies, evaluates repository health, and outputs a single-package scorecard:
+Fetches package metadata across registries, inspects release frequencies, evaluates repository health, and outputs a single-package scorecard:
 
 ```bash
-# Analyze latest release
+# Analyze Node.js packages (default)
 deppulse analyze express
-
-# Analyze a specific pinned version
 deppulse analyze rimraf@3.0.2
 
+# Analyze Python packages (PyPI)
+deppulse analyze pypi:fastapi
+deppulse analyze requests --ecosystem pypi
+
+# Analyze Rust crates (Crates.io)
+deppulse analyze crates:tokio
+deppulse analyze serde --ecosystem crates
+
+# Analyze Ruby gems
+deppulse analyze rubygems:rails
+
+# Analyze PHP packages (Packagist)
+deppulse analyze packagist:guzzlehttp/guzzle
+
+# Analyze Go modules
+deppulse analyze golang:github.com/gin-gonic/gin
+
 # Get raw telemetry and score breakdown as JSON
-deppulse analyze lodash --format json
+deppulse analyze pypi:httpx --format json
 ```
 
 ### 3. Upgrade Risk Comparison (`compare`)
 
-Compares two versions of a dependency to evaluate breaking changes, runtime engine shifts, and maintenance trajectory:
+Compares two versions or packages to evaluate breaking changes, runtime engine shifts, and maintenance trajectory:
 
 ```bash
+# Compare packages within an ecosystem
+deppulse compare axios got
+deppulse compare pypi:flask pypi:fastapi
+deppulse compare crates:actix-web crates:axum
+
 # Check upgrade feasibility from rimraf v3 to v5
 deppulse compare rimraf --from 3.0.2 --to 5.0.5
 
@@ -187,6 +238,8 @@ Prints the exact chain of evidence, mathematical weights, and applied fatal caps
 ```bash
 deppulse explain request
 deppulse explain wrappy
+deppulse explain pypi:fastapi
+deppulse explain crates:tokio
 ```
 
 ### 5. Programmatic TypeScript Engine SDK
@@ -199,14 +252,14 @@ import { DepPulseEngine, getDefaultConfig } from '@arnavvv/deppulse';
 // Initialize engine with strict default configuration
 const engine = new DepPulseEngine(getDefaultConfig());
 
-// 1. Scan a project repository
-const report = await engine.scan('./my-service');
+// 1. Scan a project repository (supports polyglot manifests)
+const report = await engine.scan('./python-service', { ecosystem: 'pypi' });
 console.log(`Scanned: ${report.scannedDependenciesCount} packages`);
 console.log(`Average Health Score: ${report.summary.averageScore}/100`);
 console.log(`Policy Status: ${report.policyResult.isPassed ? 'PASSED' : 'FAILED'}`);
 
-// 2. Perform targeted single-package evaluation
-const result = await engine.analyze('wrappy', '0.0.2');
+// 2. Perform targeted single-package evaluation across any ecosystem
+const result = await engine.analyze('fastapi', '0.110.0', 'pypi');
 console.log(`Score: ${result.score}, Mature-Stable: ${result.isMatureStable}`);
 ```
 
@@ -287,27 +340,27 @@ flowchart TD
         CFG["Strict Config & Policy Parser<br/><code>Zod v1 Schema Validation</code>"]
     end
 
-    subgraph DiscoveryLayer["3. Manifest & Lockfile Discovery Layer"]
-        MAN["Manifest Parser<br/><code>package.json (prod/dev/peer/optional)</code>"]
-        LOCK["Lockfile Resolver<br/><code>package-lock.json v1/v2/v3 & shrinkwrap</code>"]
-        SRC["Source Classifier<br/><code>npm registry vs git vs local</code>"]
+    subgraph DiscoveryLayer["3. Universal Manifest & Lockfile Discovery Layer"]
+        MAN["Polyglot Manifest Parsers<br/><code>Python, Rust, Go, Ruby, PHP, JVM, .NET, Node</code>"]
+        LOCK["Lockfile Resolvers<br/><code>poetry.lock, Cargo.lock, go.sum, Gemfile.lock, etc.</code>"]
+        SRC["Source & Ecosystem Classifier<br/><code>pypi | crates | golang | rubygems | packagist | maven | nuget | npm</code>"]
     end
 
-    subgraph NetworkLayer["4. Resilient Provider & Fetch Layer"]
+    subgraph NetworkLayer["4. Resilient Universal Provider & Fetch Layer"]
         HTTP["Resilient HTTP Client<br/><code>AbortSignal + Jittered Exponential Backoff</code>"]
-        SSRF["SSRF Defense Guard<br/><code>Private IP & Cloud Metadata Shield</code>"]
+        SSRF["SSRF Defense Guard<br/><code>Canonical Registry Allowlists & Loopback Shield</code>"]
         CACHE["Atomic Two-Tier Cache<br/><code>Memory LRU + Disk Store (.deppulse/)</code>"]
-        NPM["npm Registry Provider<br/><code>Packuments, Timestamps, Deprecations</code>"]
+        REG["Universal Registry Gateways<br/><code>PyPI, Crates.io, Go Proxy, RubyGems, Packagist, Maven, NuGet, npm</code>"]
         GH["GitHub Metadata Provider<br/><code>GraphQL/REST Archive & Commit State</code>"]
         VERIF["Repository Provenance Verifier<br/><code>Cryptographic Association & Anti-Spoofing</code>"]
         ADV["Contextual Advisory Provider<br/><code>CVEs / OSV Annotations (0 Score Impact)</code>"]
     end
 
-    subgraph ScoringCore["5. Deterministic Intelligence & Scoring Engine (Core Differentiator)"]
+    subgraph ScoringCore["5. Deterministic Intelligence & Multi-Runtime Scoring Engine"]
         CONF["Confidence Evaluator<br/><code>Registry + Repo + Runtime Telemetry Weights</code>"]
         MAT["Maturity Calibrator<br/><code>'Done' vs 'Dead' Curve (>4y, >=6 releases)</code>"]
         CAD["Release Cadence Analyzer<br/><code>Recency & Gap Telemetry</code>"]
-        COMP["Runtime Compatibility<br/><code>Active Node.js LTS Matrix (18/20/22)</code>"]
+        COMP["Polyglot Runtime Compatibility<br/><code>Node LTS (18/20/22) | Python 3.10+ | Rust MSRV</code>"]
         SCORE["Deterministic Scoring Matrix<br/><code>Additive Points (0-100) + Fatal Caps</code>"]
     end
 
@@ -330,13 +383,13 @@ flowchart TD
     SRC --> HTTP
     HTTP --> SSRF
     HTTP <--> CACHE
-    SSRF --> NPM
+    SSRF --> REG
     SSRF --> GH
     SSRF --> ADV
-    NPM --> VERIF
+    REG --> VERIF
     GH --> VERIF
 
-    NPM --> ScoringCore
+    REG --> ScoringCore
     GH --> ScoringCore
     VERIF --> ScoringCore
     ADV --> ScoringCore
@@ -806,8 +859,12 @@ npm run format
 
 ## Roadmap
 
-### Current Release: v0.1.1 (Shipped)
+### Current Release: v0.2.0 Universal Polyglot (Shipped)
 
+- [x] **Universal Polyglot Ecosystem Support**: Native manifest and lockfile discovery for **Python** (`requirements.txt`, `pyproject.toml`, `poetry.lock`), **Rust** (`Cargo.toml`, `Cargo.lock`), **Go** (`go.mod`, `go.sum`), **Ruby** (`Gemfile`, `Gemfile.lock`), **PHP** (`composer.json`, `composer.lock`), **Java/JVM** (`pom.xml`, `build.gradle`), **.NET** (`.csproj`, `packages.config`), and **Node.js** (`package.json`, `package-lock.json`).
+- [x] **Universal Registry Gateways**: Direct metadata adapters for PyPI, Crates.io, Go module proxy, RubyGems, Packagist, Maven Central, NuGet Gallery, and npm Registry.
+- [x] **Multi-Runtime Engine Compatibility Scoring**: Automated evaluation for Node.js LTS (18/20/22), Python 3.10+, and Rust MSRV edition targets.
+- [x] **Ecosystem Flag & Prefix Routing**: CLI flag `-e, --ecosystem <eco>` and prefix syntax (`pypi:fastapi`, `crates:tokio`, `rubygems:rails`).
 - [x] Full npm lockfile v1, v2, v3 and shrinkwrap deep tree resolution.
 - [x] Deterministic scoring engine with mature-stable calibration.
 - [x] Repository anti-spoofing and provenance checks.
@@ -816,7 +873,7 @@ npm run format
 - [x] Terminal ANSI, JSON, and Markdown report formatters.
 - [x] Production web visualizer and interactive simulator deployed at [DepPlus.vercel.app](https://DepPlus.vercel.app).
 
-### Phase 5: v1.1 Enhancements (In Progress)
+### Phase 5: v0.3 Enhancements (In Progress)
 
 - [ ] Deep AST parsing for `pnpm-lock.yaml` virtual dependency stores.
 - [ ] Native parsing for `yarn.lock` (v1 Classic and v2+ Berry).

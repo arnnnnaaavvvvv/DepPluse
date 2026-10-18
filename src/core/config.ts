@@ -41,7 +41,16 @@ export const NetworkConfigSchema = z.object({
   maxRetries: z.number().int().min(0).max(5).default(3),
   allowedRegistries: z
     .array(z.string().url('Registry must be a valid URL'))
-    .default(['https://registry.npmjs.org']),
+    .default([
+      'https://registry.npmjs.org',
+      'https://pypi.org',
+      'https://crates.io',
+      'https://rubygems.org',
+      'https://packagist.org',
+      'https://proxy.golang.org',
+      'https://search.maven.org',
+      'https://api.nuget.org',
+    ]),
 });
 
 export const CacheConfigSchema = z.object({

@@ -2,6 +2,19 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
+  {
+    ignores: [
+      'dist/**',
+      'bin/**',
+      'node_modules/**',
+      'coverage/**',
+      '*.d.ts',
+      'web/**',
+      '**/dist/**',
+      '.vercel/**',
+      '**/.vercel/**',
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -13,8 +26,5 @@ export default tseslint.config(
       ],
       'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
     },
-  },
-  {
-    ignores: ['dist/**', 'bin/**', 'node_modules/**', 'coverage/**', '*.d.ts', 'web/**'],
   },
 );

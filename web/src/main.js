@@ -226,6 +226,51 @@ const terminalOutputs = {
 <div class="term-line">&nbsp;</div>
 <div class="term-line term-danger-bold">Recommendation: Immediately replace with native fetch, undici, or axios.</div>
 `,
+
+  'scan-python': `
+<div class="term-line"><span class="term-prompt">$</span><span class="term-cmd">deppulse scan requirements.txt --ecosystem pypi</span></div>
+<div class="term-line term-dim">Parsing Python manifest and querying PyPI registry...</div>
+<div class="term-line">&nbsp;</div>
+<div class="term-line term-head">DepPulse v0.2.0 – Universal Dependency Health & Maintenance Intelligence</div>
+<div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
+<div class="term-line">Manifest: <span class="term-cyan">requirements.txt</span> (ecosystem: <span class="term-low">PyPI</span>)</div>
+<div class="term-line">Scanned: <span class="term-head">8 dependencies</span> (8 direct, 0 transitive)</div>
+<div class="term-line">&nbsp;</div>
+<div class="term-line">Health Overview: <span class="term-low">Healthy: 8</span> | <span class="term-medium">Medium: 0</span> | <span class="term-high">High: 0</span> | <span class="term-critical">Critical: 0</span></div>
+<div class="term-line">Average Health Score: <span class="term-low">98/100</span></div>
+<div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
+<div class="term-line term-pass-bold">✔ POLICY PASSED: All Python dependencies satisfy maintenance criteria.</div>
+`,
+
+  'scan-rust': `
+<div class="term-line"><span class="term-prompt">$</span><span class="term-cmd">deppulse scan Cargo.toml --ecosystem crates</span></div>
+<div class="term-line term-dim">Parsing Cargo.toml and Cargo.lock, verifying crates.io telemetry...</div>
+<div class="term-line">&nbsp;</div>
+<div class="term-line term-head">DepPulse v0.2.0 – Universal Dependency Health & Maintenance Intelligence</div>
+<div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
+<div class="term-line">Manifest: <span class="term-cyan">Cargo.toml</span> (ecosystem: <span class="term-low">Crates.io</span>)</div>
+<div class="term-line">Scanned: <span class="term-head">12 dependencies</span> (12 direct, 0 transitive)</div>
+<div class="term-line">&nbsp;</div>
+<div class="term-line">Health Overview: <span class="term-low">Healthy: 12</span> | <span class="term-medium">Medium: 0</span> | <span class="term-high">High: 0</span> | <span class="term-critical">Critical: 0</span></div>
+<div class="term-line">Average Health Score: <span class="term-low">99/100</span></div>
+<div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
+<div class="term-line term-pass-bold">✔ POLICY PASSED: Rust crates verified active & compliant with current MSRV.</div>
+`,
+
+  'analyze-fastapi': `
+<div class="term-line"><span class="term-prompt">$</span><span class="term-cmd">deppulse analyze pypi:fastapi</span></div>
+<div class="term-line">&nbsp;</div>
+<div class="term-line term-head">Scoring Breakdown: fastapi (PyPI)</div>
+<div class="term-line">Calculated Score: <span class="term-low">100 / 100</span> (Risk: <span class="term-low">LOW</span>)</div>
+<div class="term-line">Ecosystem: <span class="term-cyan">Python (PyPI)</span> | Requires Python: <span class="term-head">&gt;=3.8</span></div>
+<div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
+<div class="term-line term-head">Evidence Trace:</div>
+<div class="term-line">&nbsp;&nbsp;• <span class="term-low">[+10]</span> Active release cadence: recent releases on PyPI.</div>
+<div class="term-line">&nbsp;&nbsp;• <span class="term-low">[ +5]</span> Verified GitHub repository tiangolo/fastapi with &gt;70k stars.</div>
+<div class="term-line">&nbsp;&nbsp;• <span class="term-low">[ +5]</span> Satisfies active Python 3.10+ runtimes.</div>
+<div class="term-line">&nbsp;</div>
+<div class="term-line term-pass-bold">Conclusion: Package is exceptionally active and production-ready.</div>
+`,
 };
 
 const terminalScreen = document.getElementById('terminal-output-area');

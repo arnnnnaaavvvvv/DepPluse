@@ -1,4 +1,9 @@
-import type { ContextualAdvisory, PackageMetadata, RepoMetadata } from '../core/types.js';
+import type {
+  ContextualAdvisory,
+  PackageMetadata,
+  RepoMetadata,
+  SupportedEcosystem,
+} from '../core/types.js';
 
 export interface RequestOptions {
   readonly signal?: AbortSignal | undefined;
@@ -17,6 +22,15 @@ export interface NpmRegistryProvider {
     packageName: string,
     targetVersion?: string,
     options?: RequestOptions,
+  ): Promise<PackageMetadata>;
+}
+
+export interface UniversalRegistryProvider {
+  getPackageMeta(
+    packageName: string,
+    targetVersion?: string,
+    options?: RequestOptions,
+    ecosystem?: SupportedEcosystem,
   ): Promise<PackageMetadata>;
 }
 

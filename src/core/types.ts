@@ -3,8 +3,24 @@
  * Strict, read-only domain definitions for dependency health, maintenance risk, and upgrade intelligence.
  */
 
+export type SupportedEcosystem =
+  'npm' | 'pypi' | 'crates' | 'golang' | 'rubygems' | 'packagist' | 'maven' | 'nuget';
+
 export type DependencyType = 'prod' | 'dev' | 'optional' | 'peer' | 'transitive';
-export type DependencySource = 'npm' | 'workspace' | 'git' | 'file' | 'alias' | 'unknown';
+export type DependencySource =
+  | 'npm'
+  | 'pypi'
+  | 'crates'
+  | 'golang'
+  | 'rubygems'
+  | 'packagist'
+  | 'maven'
+  | 'nuget'
+  | 'workspace'
+  | 'git'
+  | 'file'
+  | 'alias'
+  | 'unknown';
 export type MaintenanceRisk = 'low' | 'medium' | 'high' | 'critical' | 'unknown';
 
 export interface DependencyRecord {
@@ -14,6 +30,7 @@ export interface DependencyRecord {
   readonly resolvedVersion: string;
   readonly type: DependencyType;
   readonly source: DependencySource;
+  readonly ecosystem?: SupportedEcosystem | undefined;
   readonly registryUrl: string;
   readonly isDirect: boolean;
   readonly dependents: readonly string[];
@@ -25,6 +42,7 @@ export interface PackageMetadata {
   readonly name: string;
   readonly version: string;
   readonly latestVersion: string;
+  readonly ecosystem?: SupportedEcosystem | undefined;
   readonly description?: string | undefined;
   readonly license?: string | undefined;
   readonly publishedAt: string; // ISO-8601
@@ -35,6 +53,12 @@ export interface PackageMetadata {
     | {
         readonly node?: string | undefined;
         readonly npm?: string | undefined;
+        readonly python?: string | undefined;
+        readonly rust?: string | undefined;
+        readonly go?: string | undefined;
+        readonly ruby?: string | undefined;
+        readonly php?: string | undefined;
+        readonly java?: string | undefined;
       }
     | undefined;
   readonly peerDependencies?: Readonly<Record<string, string>> | undefined;
@@ -72,6 +96,7 @@ export type EvidenceSignal =
   | 'release_recency'
   | 'release_cadence'
   | 'node_engine_compat'
+  | 'runtime_engine_compat'
   | 'repo_provenance'
   | 'mature_stability'
   | 'maintenance_commit_recency'
@@ -80,7 +105,19 @@ export type EvidenceSignal =
 export interface HealthEvidence {
   readonly signal: EvidenceSignal;
   readonly observedValue: unknown;
-  readonly source: 'npm' | 'github' | 'lockfile' | 'manifest' | 'advisory';
+  readonly source:
+    | 'npm'
+    | 'pypi'
+    | 'crates'
+    | 'golang'
+    | 'rubygems'
+    | 'packagist'
+    | 'maven'
+    | 'nuget'
+    | 'github'
+    | 'lockfile'
+    | 'manifest'
+    | 'advisory';
   readonly observedAt: string;
   readonly explanation: string;
   readonly contribution: number; // delta on score: -100 to +100

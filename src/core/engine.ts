@@ -6,6 +6,7 @@ import type {
   PackageMetadata,
   Report,
   ReportSummary,
+  SupportedEcosystem,
   UpgradeAssessment,
 } from './types.js';
 import type { DepPulseConfig } from './config.js';
@@ -13,7 +14,7 @@ import { getDefaultConfig } from './config.js';
 import { discoverDependencies } from '../discovery/index.js';
 import { DiskCacheStore } from '../cache/disk-store.js';
 import { ResilientHttpClient } from '../providers/http/client.js';
-import { DefaultNpmRegistryProvider } from '../providers/npm/registry.js';
+import { DefaultUniversalRegistryProvider } from '../providers/universal-registry.js';
 import { DefaultGitHubProvider } from '../providers/github/client.js';
 import { DefaultAdvisoryProvider } from '../providers/advisory/contextual.js';
 import type {
@@ -21,6 +22,7 @@ import type {
   CacheStore,
   NpmRegistryProvider,
   RepoProvider,
+  UniversalRegistryProvider,
 } from '../providers/types.js';
 import { scoreDependencyHealth } from '../scoring/engine.js';
 import { evaluateUpgradeRisk } from '../analysis/upgrade.js';
@@ -28,6 +30,7 @@ import { evaluatePolicy } from '../policy/evaluator.js';
 
 export interface EngineDependencies {
   npmProvider?: NpmRegistryProvider | undefined;
+  universalProvider?: UniversalRegistryProvider | undefined;
   repoProvider?: RepoProvider | undefined;
   advisoryProvider?: AdvisoryProvider | undefined;
   cacheStore?: CacheStore | undefined;
@@ -36,6 +39,7 @@ export interface EngineDependencies {
 export class DepPulseEngine {
   private readonly config: DepPulseConfig;
   private readonly npmProvider: NpmRegistryProvider;
+  private readonly universalProvider: UniversalRegistryProvider;
   private readonly repoProvider: RepoProvider;
   private readonly advisoryProvider: AdvisoryProvider;
   private readonly cacheStore: CacheStore;
@@ -57,8 +61,10 @@ export class DepPulseEngine {
       allowedRegistries: this.config.network.allowedRegistries,
     });
 
+    this.universalProvider =
+      deps.universalProvider ?? new DefaultUniversalRegistryProvider(httpClient, this.cacheStore);
     this.npmProvider =
-      deps.npmProvider ?? new DefaultNpmRegistryProvider(httpClient, this.cacheStore);
+      deps.npmProvider ?? (this.universalProvider as unknown as NpmRegistryProvider);
     this.repoProvider = deps.repoProvider ?? new DefaultGitHubProvider(httpClient, this.cacheStore);
     this.advisoryProvider =
       deps.advisoryProvider ?? new DefaultAdvisoryProvider(httpClient, this.cacheStore);
@@ -66,10 +72,15 @@ export class DepPulseEngine {
 
   async scan(
     projectPath: string,
-    scanOverrides: { noCache?: boolean | undefined; directOnly?: boolean | undefined } = {},
+    scanOverrides: {
+      noCache?: boolean | undefined;
+      directOnly?: boolean | undefined;
+      ecosystem?: SupportedEcosystem | 'all' | undefined;
+    } = {},
   ): Promise<Report> {
     const discovery = await discoverDependencies(projectPath, {
       includeTransitive: !scanOverrides.directOnly,
+      ecosystem: scanOverrides.ecosystem,
     });
 
     const results: DependencyHealthResult[] = [];
@@ -90,11 +101,15 @@ export class DepPulseEngine {
         if (!dep) break;
 
         try {
-          const pkgMeta = await this.npmProvider.getPackageMeta(
-            dep.name,
-            dep.resolvedVersion,
-            requestOptions,
-          );
+          const ecosystem = (dep.ecosystem ?? dep.source ?? 'npm') as SupportedEcosystem;
+          const pkgMeta = await (this.universalProvider?.getPackageMeta
+            ? this.universalProvider.getPackageMeta(
+                dep.name,
+                dep.resolvedVersion,
+                requestOptions,
+                ecosystem,
+              )
+            : this.npmProvider.getPackageMeta(dep.name, dep.resolvedVersion, requestOptions));
           const repoMeta = await this.repoProvider.getRepoMetadata(
             pkgMeta.rawRepository?.url,
             dep.name,
@@ -253,28 +268,54 @@ export class DepPulseEngine {
     };
   }
 
-  async analyze(packageName: string, version?: string): Promise<DependencyHealthResult> {
-    const pkgMeta = await this.npmProvider.getPackageMeta(packageName, version);
+  async analyze(
+    packageName: string,
+    version?: string,
+    ecosystem?: SupportedEcosystem,
+  ): Promise<DependencyHealthResult> {
+    let targetEcosystem: SupportedEcosystem = ecosystem ?? 'npm';
+    let cleanPkgName = packageName;
+    const prefixMatch = /^(pypi|crates|golang|rubygems|packagist|maven|nuget|npm):(.+)$/i.exec(
+      packageName,
+    );
+    if (prefixMatch && prefixMatch[1] && prefixMatch[2]) {
+      targetEcosystem = prefixMatch[1].toLowerCase() as SupportedEcosystem;
+      cleanPkgName = prefixMatch[2];
+    }
+
+    const pkgMeta = await (this.universalProvider?.getPackageMeta
+      ? this.universalProvider.getPackageMeta(cleanPkgName, version, {}, targetEcosystem)
+      : this.npmProvider.getPackageMeta(cleanPkgName, version));
     const resolvedVersion = version ?? pkgMeta.version;
     const repoMeta = await this.repoProvider.getRepoMetadata(
       pkgMeta.rawRepository?.url,
-      packageName,
+      cleanPkgName,
     );
     let advisories: readonly ContextualAdvisory[] = [];
     try {
-      advisories = await this.advisoryProvider.getAdvisories(packageName, resolvedVersion);
+      advisories = await this.advisoryProvider.getAdvisories(cleanPkgName, resolvedVersion);
     } catch {
       // non-blocking
     }
 
     const dummyDep: DependencyRecord = {
-      id: `${packageName}@${resolvedVersion}`,
-      name: packageName,
+      id: `${cleanPkgName}@${resolvedVersion}`,
+      name: cleanPkgName,
       declaredRange: resolvedVersion,
       resolvedVersion,
       type: 'prod',
-      source: 'npm',
-      registryUrl: 'https://registry.npmjs.org',
+      source: targetEcosystem,
+      ecosystem: targetEcosystem,
+      registryUrl:
+        targetEcosystem === 'pypi'
+          ? 'https://pypi.org'
+          : targetEcosystem === 'crates'
+            ? 'https://crates.io'
+            : targetEcosystem === 'rubygems'
+              ? 'https://rubygems.org'
+              : targetEcosystem === 'packagist'
+                ? 'https://packagist.org'
+                : 'https://registry.npmjs.org',
       isDirect: true,
       dependents: [],
     };
@@ -289,21 +330,35 @@ export class DepPulseEngine {
     packageName: string,
     fromVersion: string,
     toVersion: string,
+    ecosystem?: SupportedEcosystem,
   ): Promise<UpgradeAssessment> {
-    const currentHealth = await this.analyze(packageName, fromVersion);
-    const targetMeta = await this.npmProvider.getPackageMeta(packageName, toVersion);
+    let targetEcosystem: SupportedEcosystem = ecosystem ?? 'npm';
+    let cleanPkgName = packageName;
+    const prefixMatch = /^(pypi|crates|golang|rubygems|packagist|maven|nuget|npm):(.+)$/i.exec(
+      packageName,
+    );
+    if (prefixMatch && prefixMatch[1] && prefixMatch[2]) {
+      targetEcosystem = prefixMatch[1].toLowerCase() as SupportedEcosystem;
+      cleanPkgName = prefixMatch[2];
+    }
+
+    const currentHealth = await this.analyze(cleanPkgName, fromVersion, targetEcosystem);
+    const targetMeta = await (this.universalProvider?.getPackageMeta
+      ? this.universalProvider.getPackageMeta(cleanPkgName, toVersion, {}, targetEcosystem)
+      : this.npmProvider.getPackageMeta(cleanPkgName, toVersion));
     const targetRepo = await this.repoProvider.getRepoMetadata(
       targetMeta.rawRepository?.url,
-      packageName,
+      cleanPkgName,
     );
     const targetHealth = scoreDependencyHealth(
       {
-        id: `${packageName}@${toVersion}`,
-        name: packageName,
+        id: `${cleanPkgName}@${toVersion}`,
+        name: cleanPkgName,
         declaredRange: toVersion,
         resolvedVersion: toVersion,
         type: 'prod',
-        source: 'npm',
+        source: targetEcosystem,
+        ecosystem: targetEcosystem,
         registryUrl: 'https://registry.npmjs.org',
         isDirect: true,
         dependents: [],

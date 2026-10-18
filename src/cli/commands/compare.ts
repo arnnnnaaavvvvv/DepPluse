@@ -3,10 +3,13 @@ import { DepPulseEngine } from '../../core/engine.js';
 import { getDefaultConfig } from '../../core/config.js';
 import { UsageError } from '../../core/errors.js';
 
+import type { SupportedEcosystem } from '../../core/types.js';
+
 export interface CompareCliOptions {
   from?: string | undefined;
   to?: string | undefined;
   format?: 'terminal' | 'json' | undefined;
+  ecosystem?: SupportedEcosystem | undefined;
 }
 
 export async function handleCompareCommand(
@@ -26,7 +29,7 @@ export async function handleCompareCommand(
   }
 
   const engine = new DepPulseEngine(getDefaultConfig());
-  const assessment = await engine.compare(pkgName, options.from, options.to);
+  const assessment = await engine.compare(pkgName, options.from, options.to, options.ecosystem);
 
   if (options.format === 'json') {
     // eslint-disable-next-line no-console

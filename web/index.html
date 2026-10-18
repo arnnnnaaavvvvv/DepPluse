@@ -6,7 +6,7 @@
     <title>DepPulse — Dependency Health & Upgrade Intelligence</title>
     <meta
       name="description"
-      content="DepPulse is a production-ready Node.js CLI and decoupled engine that audits third-party dependency maintenance health, detects archived repos and deprecations, and provides actionable upgrade intelligence."
+      content="DepPulse is a production-ready universal CLI and decoupled engine that audits third-party dependency maintenance health across all major programming ecosystems (Node.js, Python, Rust, Go, Ruby, PHP, JVM, .NET), detects archived repos and deprecations, and provides actionable upgrade intelligence."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -47,7 +47,7 @@
           </div>
           <div class="logo-text">
             <span class="brand-title">Dep<span class="accent-maroon">Pulse</span></span>
-            <span class="version-tag">v0.1.1</span>
+            <span class="version-tag">v0.2.0</span>
           </div>
         </a>
 
@@ -222,7 +222,7 @@
               <span class="control-dot minimize"></span>
               <span class="control-dot expand"></span>
             </div>
-            <div class="terminal-title">bash — deppulse CLI v0.1.1</div>
+            <div class="terminal-title">bash — deppulse CLI v0.2.0 (Universal Polyglot)</div>
             <div class="terminal-status"><span class="status-online"></span> Ready</div>
           </div>
 
@@ -231,7 +231,10 @@
             <span class="command-bar-label">Choose Command:</span>
             <div class="command-buttons">
               <button class="cmd-btn active" data-cmd="scan-terminal">deppulse scan .</button>
-              <button class="cmd-btn" data-cmd="scan-direct">deppulse scan . --direct</button>
+              <button class="cmd-btn" data-cmd="scan-python">scan requirements.txt (PyPI)</button>
+              <button class="cmd-btn" data-cmd="scan-rust">scan Cargo.toml (Rust)</button>
+              <button class="cmd-btn" data-cmd="analyze-fastapi">analyze pypi:fastapi</button>
+              <button class="cmd-btn" data-cmd="scan-direct">scan . --direct</button>
               <button class="cmd-btn" data-cmd="scan-markdown">scan --format markdown</button>
               <button class="cmd-btn" data-cmd="scan-json">scan --format json</button>
               <button class="cmd-btn" data-cmd="explain-wrappy">explain wrappy</button>
@@ -272,10 +275,18 @@
             </div>
             <div class="cmd-flags-table">
               <div class="flag-row">
+                <span class="flag-syntax"><code>-e, --ecosystem &lt;eco&gt;</code></span>
+                <span class="flag-desc"
+                  >Target language ecosystem: <code>npm</code>, <code>pypi</code>,
+                  <code>crates</code>, <code>golang</code>, <code>rubygems</code>,
+                  <code>packagist</code>, <code>maven</code>, or <code>nuget</code> (auto-detected
+                  if omitted).</span
+                >
+              </div>
+              <div class="flag-row">
                 <span class="flag-syntax"><code>-d, --direct, --direct-only</code></span>
                 <span class="flag-desc"
-                  >Scan only direct dependencies from <code>package.json</code> (skips transitive
-                  lockfile entries).</span
+                  >Scan only direct dependencies (skips transitive lockfile entries).</span
                 >
               </div>
               <div class="flag-row">

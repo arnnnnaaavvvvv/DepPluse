@@ -7,13 +7,14 @@ import { formatTerminalReport } from '../../reports/terminal.js';
 import { formatJsonReport } from '../../reports/json.js';
 import { formatMarkdownReport } from '../../reports/markdown.js';
 import { PolicyViolationError, UsageError } from '../../core/errors.js';
-import type { MaintenanceRisk } from '../../core/types.js';
+import type { MaintenanceRisk, SupportedEcosystem } from '../../core/types.js';
 
 export interface ScanCliOptions {
   format?: 'terminal' | 'json' | 'markdown' | undefined;
   failOn?: string | undefined;
   direct?: boolean | undefined;
   directOnly?: boolean | undefined;
+  ecosystem?: SupportedEcosystem | 'all' | undefined;
   noCache?: boolean | undefined;
   output?: string | undefined;
   config?: string | undefined;
@@ -83,6 +84,7 @@ export async function handleScanCommand(
   const report = await engine.scan(targetPath, {
     noCache: options.noCache,
     directOnly: Boolean(options.direct || options.directOnly),
+    ecosystem: options.ecosystem,
   });
 
   let formatted = '';

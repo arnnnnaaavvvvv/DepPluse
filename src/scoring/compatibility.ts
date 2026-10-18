@@ -11,7 +11,52 @@ export interface CompatibilityAnalysis {
 
 export function analyzeEngineCompatibility(meta: PackageMetadata): CompatibilityAnalysis {
   const nodeEngine = meta.engines?.node;
+  const pythonEngine = meta.engines?.python;
+  const rustEngine = meta.engines?.rust;
   const evidence: HealthEvidence[] = [];
+
+  const source = (meta.ecosystem ?? 'npm') as any;
+
+  if (pythonEngine && pythonEngine !== '*') {
+    const ACTIVE_PYTHON_VERSIONS = ['3.10.0', '3.11.0', '3.12.0', '3.13.0'];
+    let supportedCount = 0;
+    for (const pyVer of ACTIVE_PYTHON_VERSIONS) {
+      if (semver.satisfies(pyVer, pythonEngine) || pythonEngine.includes('3.')) {
+        supportedCount++;
+      }
+    }
+    if (supportedCount > 0) {
+      evidence.push({
+        signal: 'runtime_engine_compat',
+        observedValue: { pythonEngine, supportedCount },
+        source,
+        observedAt: new Date().toISOString(),
+        explanation: `Declared Python compatibility '${pythonEngine}' satisfies active Python 3.10+ runtimes.`,
+        contribution: 5,
+      });
+    }
+    return {
+      satisfiesCurrentLts: supportedCount > 0,
+      supportedLtsCount: supportedCount,
+      evidence,
+    };
+  }
+
+  if (rustEngine && rustEngine !== '*') {
+    evidence.push({
+      signal: 'runtime_engine_compat',
+      observedValue: { rustEngine },
+      source,
+      observedAt: new Date().toISOString(),
+      explanation: `Declared Rust MSRV edition '${rustEngine}'.`,
+      contribution: 5,
+    });
+    return {
+      satisfiesCurrentLts: true,
+      supportedLtsCount: 1,
+      evidence,
+    };
+  }
 
   if (!nodeEngine || nodeEngine === '*') {
     // Missing engine field is neutral - missing data is never penalized

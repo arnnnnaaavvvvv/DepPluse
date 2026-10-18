@@ -3,8 +3,11 @@ import { getDefaultConfig } from '../../core/config.js';
 import { formatSinglePackageTerminal } from '../../reports/terminal.js';
 import { UsageError } from '../../core/errors.js';
 
+import type { SupportedEcosystem } from '../../core/types.js';
+
 export interface AnalyzeCliOptions {
   format?: 'terminal' | 'json' | undefined;
+  ecosystem?: SupportedEcosystem | undefined;
 }
 
 export async function handleAnalyzeCommand(
@@ -26,7 +29,7 @@ export async function handleAnalyzeCommand(
   }
 
   const engine = new DepPulseEngine(getDefaultConfig());
-  const health = await engine.analyze(name, version);
+  const health = await engine.analyze(name, version, options.ecosystem);
 
   if (options.format === 'json') {
     // eslint-disable-next-line no-console

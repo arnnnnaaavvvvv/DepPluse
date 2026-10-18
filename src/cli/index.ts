@@ -11,13 +11,15 @@ export function createProgram(): Command {
 
   program
     .name('deppulse')
-    .description('Dependency health and upgrade intelligence CLI for Node.js')
-    .version('0.1.1');
+    .description(
+      'Universal dependency health & upgrade risk intelligence CLI (npm, PyPI, Crates, Go, Ruby, PHP, Maven, NuGet)',
+    )
+    .version('0.2.0');
 
   program
     .command('scan [path]')
     .description(
-      'Scan project dependencies, evaluate maintenance risk, and enforce health policies',
+      'Scan project dependencies, evaluate maintenance risk, and enforce health policies across any language',
     )
     .option('-f, --format <format>', 'Output format: terminal, json, markdown', 'terminal')
     .option('--fail-on <risk>', 'Fail build on risk level: low, medium, high, critical, unknown')
@@ -25,6 +27,10 @@ export function createProgram(): Command {
       '-d, --direct, --direct-only',
       'Scan only direct dependencies (ignore transitive lockfile entries)',
       false,
+    )
+    .option(
+      '-e, --ecosystem <ecosystem>',
+      'Target language ecosystem: all, npm, pypi, crates, golang, rubygems, packagist, maven, nuget',
     )
     .option('--no-cache', 'Bypass local response cache')
     .option('-o, --output <file>', 'Save output report to file')
@@ -38,6 +44,10 @@ export function createProgram(): Command {
     .command('analyze <package>')
     .description('Inspect telemetry, maintenance signals, and health score for a single package')
     .option('-f, --format <format>', 'Output format: terminal, json', 'terminal')
+    .option(
+      '-e, --ecosystem <ecosystem>',
+      'Target language ecosystem: npm, pypi, crates, golang, rubygems, packagist, maven, nuget',
+    )
     .action(async (pkg: string, options) => {
       await handleAnalyzeCommand(pkg, options);
     });
@@ -48,6 +58,10 @@ export function createProgram(): Command {
     .requiredOption('--from <version>', 'Current version')
     .requiredOption('--to <version>', 'Target version')
     .option('-f, --format <format>', 'Output format: terminal, json', 'terminal')
+    .option(
+      '-e, --ecosystem <ecosystem>',
+      'Target language ecosystem: npm, pypi, crates, golang, rubygems, packagist, maven, nuget',
+    )
     .action(async (pkg: string, options) => {
       await handleCompareCommand(pkg, options);
     });
