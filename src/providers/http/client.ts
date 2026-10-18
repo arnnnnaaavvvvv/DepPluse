@@ -146,7 +146,6 @@ export class ResilientHttpClient {
       await this.acquireSlot();
 
       const controller = new AbortController();
-      let timeoutId: NodeJS.Timeout | null = null;
 
       if (options.signal) {
         options.signal.addEventListener('abort', () => controller.abort(options.signal?.reason), {
@@ -154,7 +153,7 @@ export class ResilientHttpClient {
         });
       }
 
-      timeoutId = setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         controller.abort(new Error(`Request timed out after ${timeoutMs}ms`));
       }, timeoutMs);
 

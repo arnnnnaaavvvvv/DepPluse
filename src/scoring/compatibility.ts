@@ -1,7 +1,7 @@
 import semver from 'semver';
 import type { HealthEvidence, PackageMetadata } from '../core/types.js';
 
-const ACTIVE_NODE_LTS_VERSIONS = ['18.20.0', '20.18.0', '22.11.0'];
+const ACTIVE_NODE_LTS_VERSIONS = ['18.20.8', '20.19.0', '22.14.0', '24.0.0'];
 
 export interface CompatibilityAnalysis {
   readonly satisfiesCurrentLts: boolean;

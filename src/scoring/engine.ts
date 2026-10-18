@@ -149,7 +149,7 @@ export function scoreDependencyHealth(
 
   finalScore = Math.min(100, Math.max(0, Math.round(finalScore)));
 
-  let maintenanceRisk: MaintenanceRisk = 'low';
+  let maintenanceRisk: MaintenanceRisk;
   if (finalScore <= 25) {
     maintenanceRisk = 'critical';
   } else if (finalScore < 50) {

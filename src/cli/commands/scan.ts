@@ -87,7 +87,7 @@ export async function handleScanCommand(
     ecosystem: options.ecosystem,
   });
 
-  let formatted = '';
+  let formatted: string;
   switch (format) {
     case 'json':
       formatted = formatJsonReport(report);

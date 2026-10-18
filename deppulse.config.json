@@ -6,24 +6,9 @@
     "maxHighRiskAllowed": 5,
     "allowList": [
       {
-        "name": "eslint",
-        "versionRange": "*",
-        "reason": "Internal development linter pinned in devDependencies"
-      },
-      {
         "name": "eslint-visitor-keys",
         "versionRange": "*",
         "reason": "Transitive AST visitor key utility bundled with ESLint"
-      },
-      {
-        "name": "json-buffer",
-        "versionRange": "*",
-        "reason": "Transitive caching buffer serializer used by flat-cache"
-      },
-      {
-        "name": "stackback",
-        "versionRange": "*",
-        "reason": "Transitive stack trace helper used by vitest test runner"
       }
     ]
   }

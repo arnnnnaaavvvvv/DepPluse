@@ -341,7 +341,7 @@ async function discoverNpmDependencies(
 
     directNames.add(declared.name);
 
-    let resolvedVersion = '';
+    let resolvedVersion: string;
     const lockfileEntry = lockfile?.packages.get(declared.name);
     if (lockfileEntry?.resolvedVersion) {
       resolvedVersion = lockfileEntry.resolvedVersion;

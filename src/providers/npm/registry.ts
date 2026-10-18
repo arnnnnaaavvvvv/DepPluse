@@ -41,7 +41,7 @@ export class DefaultNpmRegistryProvider implements NpmRegistryProvider {
     targetVersion?: string,
     options: RequestOptions = {},
   ): Promise<PackageMetadata> {
-    const cacheKey = `npm:packument:${packageName}`;
+    const cacheKey = `npm:packument:${packageName}:${targetVersion ?? 'latest'}`;
 
     if (!options.forceRefresh) {
       const cached = await this.cache.get<PackageMetadata>(cacheKey);
