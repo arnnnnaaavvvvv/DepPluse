@@ -1,6 +1,6 @@
 # DepPulse
 
-> **Universal dependency maintenance health and upgrade risk intelligence across every programming language.**  
+> **Universal dependency maintenance health and upgrade risk intelligence across major programming language.**  
 > Know which third-party packages are actively maintained, abandoned, or quietly archived—backed by verifiable registry telemetry, calibrated mature-package awareness, multi-ecosystem runtime checks, and zero speculative guesswork.
 
 [![CI Status](https://github.com/arnnnnaaavvvvv/DepPluse/actions/workflows/ci.yml/badge.svg)](https://github.com/arnnnnaaavvvvv/DepPluse/actions)
