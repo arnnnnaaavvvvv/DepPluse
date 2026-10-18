@@ -217,7 +217,7 @@
               <span class="control-dot minimize"></span>
               <span class="control-dot expand"></span>
             </div>
-            <div class="terminal-title">bash — deppulse CLI v0.1.0</div>
+            <div class="terminal-title">bash — deppulse CLI v0.1.1</div>
             <div class="terminal-status"><span class="status-online"></span> Ready</div>
           </div>
 
@@ -226,6 +226,7 @@
             <span class="command-bar-label">Choose Command:</span>
             <div class="command-buttons">
               <button class="cmd-btn active" data-cmd="scan-terminal">deppulse scan .</button>
+              <button class="cmd-btn" data-cmd="scan-direct">deppulse scan . --direct</button>
               <button class="cmd-btn" data-cmd="scan-markdown">scan --format markdown</button>
               <button class="cmd-btn" data-cmd="scan-json">scan --format json</button>
               <button class="cmd-btn" data-cmd="explain-wrappy">explain wrappy</button>
@@ -264,6 +265,12 @@
               </p>
             </div>
             <div class="cmd-flags-table">
+              <div class="flag-row">
+                <span class="flag-syntax"><code>-d, --direct, --direct-only</code></span>
+                <span class="flag-desc"
+                  >Scan only direct dependencies from <code>package.json</code> (skips transitive lockfile entries).</span
+                >
+              </div>
               <div class="flag-row">
                 <span class="flag-syntax"><code>-f, --format &lt;fmt&gt;</code></span>
                 <span class="flag-desc"

@@ -73,12 +73,12 @@ const terminalOutputs = {
 <div class="term-line"><span class="term-prompt">$</span><span class="term-cmd">deppulse scan .</span></div>
 <div class="term-line term-dim">Scanning dependencies in package.json & package-lock.json...</div>
 <div class="term-line">&nbsp;</div>
-<div class="term-line term-head">DepPulse v0.1.0 – Dependency Health & Maintenance Intelligence</div>
+<div class="term-line term-head">DepPulse v0.1.1 – Dependency Health & Maintenance Intelligence</div>
 <div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
 <div class="term-line">Manifest: <span class="term-cyan">package.json</span> (npm-v3, coverage: <span class="term-low">full</span>)</div>
 <div class="term-line">Scanned: <span class="term-head">228 dependencies</span> (14 direct, 214 transitive, 0 skipped)</div>
 <div class="term-line">&nbsp;</div>
-<div class="term-line">Health Overview: <span class="term-critical">Critical: 2</span> | <span class="term-high">High: 1</span> | <span class="term-medium">Medium: 7</span> | <span class="term-low">Low (Healthy): 208</span> | <span class="term-dim">Unknown: 10</span></div>
+<div class="term-line">Health Overview: <span class="term-critical">Critical: 2</span> | <span class="term-high">High: 1</span> | <span class="term-medium">Medium: 7</span> | <span class="term-low">Low (Healthy): 218</span></div>
 <div class="term-line">Average Health Score: <span class="term-low">97/100</span></div>
 <div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
 <div class="term-line">&nbsp;</div>
@@ -103,6 +103,33 @@ const terminalOutputs = {
 <div class="term-line term-critical">&nbsp;&nbsp;• eslint@9.39.5 carries critical maintenance risk (score: 20). (Rule: failOnRisk contains 'critical')</div>
 <div class="term-line term-high">&nbsp;&nbsp;• Project contains 1 high risk dependencies, exceeding allowed limit of 0. (Rule: maxHighRiskAllowed (0))</div>
 <div class="term-line">&nbsp;</div>
+<div class="term-line term-dim">Tip: Review flagged dependencies or update policy in deppulse.config.json</div>
+<div class="term-line term-dim">Process completed with exit code 1.</div>
+`,
+
+  'scan-direct': `
+<div class="term-line"><span class="term-prompt">$</span><span class="term-cmd">deppulse scan . --direct</span></div>
+<div class="term-line term-dim">Scanning direct dependencies from package.json...</div>
+<div class="term-line">&nbsp;</div>
+<div class="term-line term-head">DepPulse v0.1.1 – Dependency Health & Maintenance Intelligence</div>
+<div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
+<div class="term-line">Manifest: <span class="term-cyan">package.json</span> (coverage: <span class="term-low">direct-only</span>)</div>
+<div class="term-line">Scanned: <span class="term-head">14 dependencies</span> (14 direct, 0 transitive, 0 skipped)</div>
+<div class="term-line">&nbsp;</div>
+<div class="term-line">Health Overview: <span class="term-critical">Critical: 1</span> | <span class="term-high">High: 0</span> | <span class="term-medium">Medium: 0</span> | <span class="term-low">Low (Healthy): 13</span></div>
+<div class="term-line">Average Health Score: <span class="term-low">94/100</span></div>
+<div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
+<div class="term-line">&nbsp;</div>
+<div class="term-line term-head">Actionable Maintenance Alerts:</div>
+<div class="term-line">&nbsp;</div>
+<div class="term-line"><span class="term-critical">CRITICAL</span> <span class="term-cmd">eslint@9.39.5</span> <span class="term-dim">[direct]</span> Score: <span class="term-critical">20</span></div>
+<div class="term-line term-critical">&nbsp;&nbsp;✖ Package is deprecated: This version is no longer supported. Please see https://eslint.org/version-support for options.</div>
+<div class="term-line">&nbsp;</div>
+<div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
+<div class="term-line term-danger-bold">✖ POLICY FAILED: Found 1 policy violation(s):</div>
+<div class="term-line term-critical">&nbsp;&nbsp;• eslint@9.39.5 carries critical maintenance risk (score: 20). (Rule: failOnRisk contains 'critical')</div>
+<div class="term-line">&nbsp;</div>
+<div class="term-line term-dim">Tip: Review flagged dependencies or update policy in deppulse.config.json</div>
 <div class="term-line term-dim">Process completed with exit code 1.</div>
 `,
 
