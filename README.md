@@ -8,7 +8,7 @@
 [![Ecosystems](https://img.shields.io/badge/Ecosystems-Python%20%7C%20Rust%20%7C%20Go%20%7C%20Ruby%20%7C%20PHP%20%7C%20JVM%20%7C%20.NET%20%7C%20Node-blueviolet)](#supported-ecosystems)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg?logo=node.js)](https://nodejs.org)
 [![TypeScript Strict](https://img.shields.io/badge/TypeScript-Strict%20NodeNext-blue.svg?logo=typescript)](https://www.typescriptlang.org)
-[![Live Interactive Dashboard](https://img.shields.io/badge/Live%20Demo-DepPlus.vercel.app-7928ca?logo=vercel)](https://DepPlus.vercel.app)
+[![Live Interactive Dashboard](https://img.shields.io/badge/Live%20Demo-deppluse.vercel.app-7928ca?logo=vercel)](https://deppluse.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
@@ -53,7 +53,7 @@ DepPulse natively detects, parses, and resolves dependencies across 8 distinct p
 | **Resilient Network & SSRF Defense**           | Features jittered exponential backoff, rate-limit adaptation, registry allowlists, and loopback/cloud-metadata blocking (`169.254.169.254`, `127.0.0.1`).                                      |
 | **Strict Read-Only Verification**              | Guarantees zero disk writes to target project manifests, zero lockfile mutations, and zero execution of arbitrary lifecycle scripts (`postinstall`, setup.py).                                 |
 | **CI Policy Gatekeeper & Exit Code Mapping**   | Enforces customizable quality gates (`failOnRisk`, `maxHighRiskAllowed`, time-bounded `allowList` exceptions) with standard Unix exit codes (0, 1, 2).                                         |
-| **Interactive Terminal Simulator & Web Suite** | Deployed at [DepPlus.vercel.app](https://DepPlus.vercel.app) with an interactive CLI simulator, dynamic scoring playground, and visual config builder.                                         |
+| **Interactive Terminal Simulator & Web Suite** | Deployed at [deppluse.vercel.app](https://deppluse.vercel.app) with an interactive CLI simulator, dynamic scoring playground, and visual config builder.                                       |
 
 ---
 
@@ -332,7 +332,7 @@ flowchart TD
     subgraph ClientLayer["1. Client & Invocation Layer"]
         CLI["CLI Command Dispatcher<br/><code>deppulse scan | analyze | compare | explain</code>"]
         API["Programmatic Engine SDK<br/><code>DepPulseEngine API</code>"]
-        WEB["Interactive Web App & Visualizer<br/><code>https://DepPlus.vercel.app</code>"]
+        WEB["Interactive Web App & Visualizer<br/><code>https://deppluse.vercel.app</code>"]
     end
 
     subgraph EntryPoint["2. Orchestration & Control Layer"]
@@ -871,7 +871,7 @@ npm run format
 - [x] Resilient HTTP client with jittered backoff, rate-limit adaptation, and SSRF guard.
 - [x] Atomic two-tier caching (`.deppulse/cache/`).
 - [x] Terminal ANSI, JSON, and Markdown report formatters.
-- [x] Production web visualizer and interactive simulator deployed at [DepPlus.vercel.app](https://DepPlus.vercel.app).
+- [x] Production web visualizer and interactive simulator deployed at [deppluse.vercel.app](https://deppluse.vercel.app).
 
 ### Phase 5: v0.3 Enhancements (In Progress)
 
