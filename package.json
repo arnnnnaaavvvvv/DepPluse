@@ -1,6 +1,6 @@
 {
   "name": "@arnavvv/deppulse",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Universal dependency health and upgrade intelligence CLI and engine (npm, PyPI, Crates, Go, Ruby, PHP, Maven, NuGet)",
   "keywords": [
     "dependency",
