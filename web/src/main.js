@@ -6,8 +6,8 @@
 const installCommands = {
   npx: 'npx @arnavvv/deppulse scan .',
   npm: 'npm install -D @arnavvv/deppulse\nnpx @arnavvv/deppulse scan .',
-  pnpm: 'pnpm add -D @arnavvv/deppulse\npnpm @arnavvv/deppulse scan .',
-  yarn: 'yarn add -D @arnavvv/deppulse\nyarn @arnavvv/deppulse scan .',
+  pnpm: 'pnpm add -D @arnavvv/deppulse\npnpm dlx @arnavvv/deppulse scan .',
+  yarn: 'yarn add -D @arnavvv/deppulse\nyarn dlx @arnavvv/deppulse scan .',
   global: 'npm install -g @arnavvv/deppulse\ndeppulse scan .',
 };
 

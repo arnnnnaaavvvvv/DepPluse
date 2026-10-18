@@ -44,7 +44,7 @@ In practice, the greatest dependency risks aren't just version numbers—they ar
 Here is the authentic output of `deppulse scan` running directly against a project:
 
 ```text
-DepPulse v0.1.0 – Dependency Health & Maintenance Intelligence
+DepPulse v0.1.1 – Dependency Health & Maintenance Intelligence
 ──────────────────────────────────────────────────────────────────────
 Manifest: package.json (npm-v3, coverage: full)
 Scanned: 228 dependencies (14 direct, 214 transitive, 0 skipped)
