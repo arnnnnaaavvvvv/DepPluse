@@ -4,7 +4,8 @@
 > Know which third-party packages are actively maintained, abandoned, or quietly archived—backed by verifiable registry telemetry, calibrated mature-package awareness, multi-ecosystem runtime checks, and zero speculative guesswork.
 
 [![CI Status](https://github.com/arnnnnaaavvvvv/DepPluse/actions/workflows/ci.yml/badge.svg)](https://github.com/arnnnnaaavvvvv/DepPluse/actions)
-[![npm version](https://img.shields.io/badge/npm-v0.2.0-cb3837?logo=npm)](https://www.npmjs.com/package/@arnavvv/deppulse)
+[![npm version](https://img.shields.io/npm/v/@arnavvv/deppulse?logo=npm&color=cb3837)](https://www.npmjs.com/package/@arnavvv/deppulse)
+[![npm downloads](https://img.shields.io/npm/dt/@arnavvv/deppulse?logo=npm&color=10b981&label=downloads)](https://www.npmjs.com/package/@arnavvv/deppulse)
 [![Ecosystems](https://img.shields.io/badge/Ecosystems-Python%20%7C%20Rust%20%7C%20Go%20%7C%20Ruby%20%7C%20PHP%20%7C%20JVM%20%7C%20.NET%20%7C%20Node-blueviolet)](#supported-ecosystems)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg?logo=node.js)](https://nodejs.org)
 [![TypeScript Strict](https://img.shields.io/badge/TypeScript-Strict%20NodeNext-blue.svg?logo=typescript)](https://www.typescriptlang.org)
