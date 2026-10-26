@@ -1,5 +1,5 @@
 {
-  "name": "@arnavvv/deppulse",
+  "name": "@arnnnnaaavvvvv/deppulse",
   "version": "0.2.1",
   "description": "Universal dependency health and upgrade intelligence CLI and engine (npm, PyPI, Crates, Go, Ruby, PHP, Maven, NuGet)",
   "keywords": [
@@ -43,6 +43,17 @@
     "README.md",
     "LICENSE"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arnnnnaaavvvvv/DepPluse.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "homepage": "https://github.com/arnnnnaaavvvvv/DepPluse#readme",
+  "bugs": {
+    "url": "https://github.com/arnnnnaaavvvvv/DepPluse/issues"
+  },
   "engines": {
     "node": ">=18.0.0"
   },
