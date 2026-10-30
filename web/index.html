@@ -82,6 +82,11 @@
     <main class="page-content">
       <!-- Hero Section -->
       <section class="hero-section container">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span>v0.2.1 Universal Health &amp; Maintenance Intelligence</span>
+        </div>
+
         <h1 class="hero-title">
           Know What Maintenance Risks Your
           <span class="gradient-text">Dependencies Carry.</span>
@@ -96,7 +101,7 @@
 
         <!-- Quick Run Box -->
         <div class="quick-terminal-box">
-          <div class="quick-terminal-label">Zero install instant run:</div>
+          <div class="quick-terminal-label">Zero-install instant scan</div>
           <div class="quick-terminal-code">
             <span class="terminal-prompt">$</span>
             <code id="quick-run-cmd">npx @arnavvv/deppulse scan .</code>
@@ -119,31 +124,87 @@
 
         <div class="hero-metrics-grid">
           <div class="metric-card">
-            <div class="metric-icon">🛡️</div>
-            <div class="metric-value">SSRF & DoS Safe</div>
+            <div class="metric-icon">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+            </div>
+            <div class="metric-value">SSRF &amp; DoS Safe</div>
             <div class="metric-desc">
-              Manual redirects re-validated & 64MB streaming payload caps
+              Manual redirects re-validated &amp; 64MB streaming payload caps
             </div>
           </div>
           <div class="metric-card">
-            <div class="metric-icon">⚖️</div>
+            <div class="metric-icon">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1zM2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"
+                />
+                <path d="M7 21h10M12 3v18M3 7h18" />
+              </svg>
+            </div>
             <div class="metric-value">Mature-Stable Waiver</div>
             <div class="metric-desc">
               Done packages like wrappy are never penalized for quiet stability
             </div>
           </div>
           <div class="metric-card">
-            <div class="metric-icon">🔒</div>
+            <div class="metric-icon">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0110 0v4" />
+              </svg>
+            </div>
             <div class="metric-value">Zero Local Mutation</div>
             <div class="metric-desc">
               Guaranteed read-only; no script execution and zero file writes
             </div>
           </div>
           <div class="metric-card">
-            <div class="metric-icon">⚡</div>
+            <div class="metric-icon">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+            </div>
             <div class="metric-value">100% Deterministic</div>
             <div class="metric-desc">
-              Identical inputs generate bit-for-bit identical evidence & reports
+              Identical inputs generate bit-for-bit identical evidence &amp; reports
             </div>
           </div>
         </div>
@@ -548,7 +609,19 @@
               <div class="score-meta">
                 <span class="risk-badge badge-low" id="calc-risk-badge">Low Maintenance Risk</span>
                 <div class="mature-badge" id="calc-mature-pill">
-                  ✨ Verified Mature-Stable Package
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <span>Verified Mature-Stable Package</span>
                 </div>
               </div>
             </div>

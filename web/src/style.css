@@ -428,16 +428,16 @@ body {
 }
 
 .metric-icon {
-  font-size: 1.35rem;
   margin-bottom: 0.85rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   background: rgba(196, 18, 56, 0.12);
   border: 1px solid rgba(196, 18, 56, 0.25);
+  color: var(--crimson-glow);
 }
 
 .metric-value {
@@ -1176,9 +1176,17 @@ body {
 }
 
 .mature-badge {
-  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8rem;
   color: #fbcfe8;
   font-weight: 500;
+}
+
+.mature-badge svg {
+  color: var(--crimson-glow);
+  flex-shrink: 0;
 }
 
 .calc-breakdown {

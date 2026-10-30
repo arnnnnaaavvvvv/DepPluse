@@ -85,20 +85,20 @@ const terminalOutputs = {
 <div class="term-line term-head">Actionable Maintenance Alerts:</div>
 <div class="term-line">&nbsp;</div>
 <div class="term-line"><span class="term-critical">CRITICAL</span> <span class="term-cmd">eslint@9.39.5</span> <span class="term-dim">[direct]</span> Score: <span class="term-critical">20</span></div>
-<div class="term-line term-critical">&nbsp;&nbsp;✖ Package is deprecated: This version is no longer supported. Please see https://eslint.org/version-support for options.</div>
+<div class="term-line term-critical">&nbsp;&nbsp;✕ Package is deprecated: This version is no longer supported. Please see https://eslint.org/version-support for options.</div>
 <div class="term-line">&nbsp;</div>
 <div class="term-line"><span class="term-critical">CRITICAL</span> <span class="term-cmd">eslint-visitor-keys@3.4.3</span> <span class="term-dim">[transitive]</span> Score: <span class="term-critical">25</span></div>
-<div class="term-line term-yellow">&nbsp;&nbsp;⚠ Last release was 1163 days ago. As a mature-stable package, core functionality remains established. (-5)</div>
-<div class="term-line term-critical">&nbsp;&nbsp;✖ Upstream GitHub repository eslint/eslint-visitor-keys has been archived by maintainers. (Fatal Cap: 25)</div>
+<div class="term-line term-yellow">&nbsp;&nbsp;▲ Last release was 1163 days ago. As a mature-stable package, core functionality remains established. (-5)</div>
+<div class="term-line term-critical">&nbsp;&nbsp;✕ Upstream GitHub repository eslint/eslint-visitor-keys has been archived by maintainers. (Fatal Cap: 25)</div>
 <div class="term-line">&nbsp;</div>
 <div class="term-line"><span class="term-high">HIGH</span> <span class="term-cmd">@napi-rs/lzma-linux-x64-gnu@1.5.1</span> <span class="term-dim">[transitive]</span> Score: <span class="term-high">40</span></div>
-<div class="term-line term-high">&nbsp;&nbsp;✖ Declared engines.node '^22.20 || ^24.12 || &gt;=25' is incompatible with all current Node.js LTS runtimes.</div>
+<div class="term-line term-high">&nbsp;&nbsp;✕ Declared engines.node '^22.20 || ^24.12 || &gt;=25' is incompatible with all current Node.js LTS runtimes.</div>
 <div class="term-line">&nbsp;</div>
 <div class="term-line"><span class="term-medium">MEDIUM</span> <span class="term-cmd">concat-map@0.0.1</span> <span class="term-dim">[transitive]</span> Score: <span class="term-medium">75</span></div>
-<div class="term-line term-yellow">&nbsp;&nbsp;⚠ Stagnant release cadence: no published releases in 4643 days (&gt;2 years). (-25)</div>
+<div class="term-line term-yellow">&nbsp;&nbsp;▲ Stagnant release cadence: no published releases in 4643 days (&gt;2 years). (-25)</div>
 <div class="term-line">&nbsp;</div>
 <div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
-<div class="term-line term-critical term-bold">🛡 Security Vulnerabilities & Advisories (2 detected across project):</div>
+<div class="term-line term-critical term-bold">Security Advisories &amp; Vulnerabilities (2 detected across project):</div>
 <div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
 <div class="term-line"><span class="term-critical">CRITICAL</span> <span class="term-cmd">tinypool@1.1.1</span> <span class="term-dim">[transitive]</span></div>
 <div class="term-line term-dim">&nbsp;&nbsp;• <span class="term-head">GHSA-5gmw-xhrv-c9v3</span> (CVE-2026-104848): Prototype Pollution gadget in worker options leads to RCE</div>
@@ -109,7 +109,7 @@ const terminalOutputs = {
 <div class="term-line term-cyan">&nbsp;&nbsp;&nbsp;&nbsp;Advisory: https://osv.dev/vulnerability/GHSA-85c8-ppgw-ccpr</div>
 <div class="term-line">&nbsp;</div>
 <div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
-<div class="term-line term-danger-bold">✖ POLICY FAILED: Found 3 policy violation(s):</div>
+<div class="term-line term-danger-bold">✕ POLICY FAILED: Found 3 policy violation(s):</div>
 <div class="term-line term-critical">&nbsp;&nbsp;• eslint-visitor-keys@3.4.3 carries critical maintenance risk (score: 25). (Rule: failOnRisk contains 'critical')</div>
 <div class="term-line term-critical">&nbsp;&nbsp;• eslint@9.39.5 carries critical maintenance risk (score: 20). (Rule: failOnRisk contains 'critical')</div>
 <div class="term-line term-high">&nbsp;&nbsp;• Project contains 1 high risk dependencies, exceeding allowed limit of 0. (Rule: maxHighRiskAllowed (0))</div>
@@ -134,10 +134,10 @@ const terminalOutputs = {
 <div class="term-line term-head">Actionable Maintenance Alerts:</div>
 <div class="term-line">&nbsp;</div>
 <div class="term-line"><span class="term-critical">CRITICAL</span> <span class="term-cmd">eslint@9.39.5</span> <span class="term-dim">[direct]</span> Score: <span class="term-critical">20</span></div>
-<div class="term-line term-critical">&nbsp;&nbsp;✖ Package is deprecated: This version is no longer supported. Please see https://eslint.org/version-support for options.</div>
+<div class="term-line term-critical">&nbsp;&nbsp;✕ Package is deprecated: This version is no longer supported. Please see https://eslint.org/version-support for options.</div>
 <div class="term-line">&nbsp;</div>
 <div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
-<div class="term-line term-danger-bold">✖ POLICY FAILED: Found 1 policy violation(s):</div>
+<div class="term-line term-danger-bold">✕ POLICY FAILED: Found 1 policy violation(s):</div>
 <div class="term-line term-critical">&nbsp;&nbsp;• eslint@9.39.5 carries critical maintenance risk (score: 20). (Rule: failOnRisk contains 'critical')</div>
 <div class="term-line">&nbsp;</div>
 <div class="term-line term-dim">Tip: Review flagged dependencies or update policy in deppulse.config.json</div>
@@ -147,7 +147,7 @@ const terminalOutputs = {
   'scan-markdown': `
 <div class="term-line"><span class="term-prompt">$</span><span class="term-cmd">deppulse scan . --format markdown</span></div>
 <div class="term-line">&nbsp;</div>
-<div class="term-line term-cyan">## 🛡️ DepPulse Dependency Health Report</div>
+<div class="term-line term-cyan">## DepPulse Dependency Health Report</div>
 <div class="term-line">&nbsp;</div>
 <div class="term-line">| Metric | Value |</div>
 <div class="term-line">| :--- | :--- |</div>
@@ -155,13 +155,13 @@ const terminalOutputs = {
 <div class="term-line">| **Average Score** | **97 / 100** |</div>
 <div class="term-line">| **Critical Risk** | 2 |</div>
 <div class="term-line">| **High Risk** | 1 |</div>
-<div class="term-line">| **Status** | ❌ **Policy Breached** |</div>
+<div class="term-line">| **Status** | **Policy Breached (Failed)** |</div>
 <div class="term-line">&nbsp;</div>
-<div class="term-line term-cyan">### ⚠️ Flagged Dependencies</div>
+<div class="term-line term-cyan">### Flagged Dependencies</div>
 <div class="term-line">&nbsp;</div>
-<div class="term-line">- 🔴 **eslint@9.39.5** (Score: 20) — *Deprecated: version is no longer supported.*</div>
-<div class="term-line">- 🔴 **eslint-visitor-keys@3.4.3** (Score: 25) — *Upstream GitHub repo eslint/eslint-visitor-keys archived.*</div>
-<div class="term-line">- 🟠 **@napi-rs/lzma-linux-x64-gnu@1.5.1** (Score: 40) — *Node LTS engine incompatibility.*</div>
+<div class="term-line">- **[CRITICAL] eslint@9.39.5** (Score: 20) — *Deprecated: version is no longer supported.*</div>
+<div class="term-line">- **[CRITICAL] eslint-visitor-keys@3.4.3** (Score: 25) — *Upstream GitHub repo eslint/eslint-visitor-keys archived.*</div>
+<div class="term-line">- **[HIGH] @napi-rs/lzma-linux-x64-gnu@1.5.1** (Score: 40) — *Node LTS engine incompatibility.*</div>
 <div class="term-line">&nbsp;</div>
 <div class="term-line term-dim">&gt; Generated automatically by DepPulse in GitHub Actions.</div>
 `,
@@ -231,9 +231,9 @@ const terminalOutputs = {
 <div class="term-line">Telemetry Confidence: <span class="term-yellow">0.70</span> (Verified upstream telemetry)</div>
 <div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
 <div class="term-line term-head">Observed Telemetry Facts:</div>
-<div class="term-line term-critical">&nbsp;&nbsp;✖ [FATAL CAP: 20] Package officially deprecated: "request has been deprecated, see https://github.com/request/request/issues/3142"</div>
-<div class="term-line term-yellow">&nbsp;&nbsp;⚠ Stagnant release cadence: 0 releases in 2480 days (&gt;6 years).</div>
-<div class="term-line term-critical">&nbsp;&nbsp;✖ Upstream repository github.com/request/request is archived and read-only.</div>
+<div class="term-line term-critical">&nbsp;&nbsp;✕ [FATAL CAP: 20] Package officially deprecated: "request has been deprecated, see https://github.com/request/request/issues/3142"</div>
+<div class="term-line term-yellow">&nbsp;&nbsp;▲ Stagnant release cadence: 0 releases in 2480 days (&gt;6 years).</div>
+<div class="term-line term-critical">&nbsp;&nbsp;✕ Upstream repository github.com/request/request is archived and read-only.</div>
 <div class="term-line">&nbsp;</div>
 <div class="term-line term-danger-bold">Recommendation: Immediately replace with native fetch, undici, or axios.</div>
 `,
@@ -250,7 +250,7 @@ const terminalOutputs = {
 <div class="term-line">Health Overview: <span class="term-low">Healthy: 8</span> | <span class="term-medium">Medium: 0</span> | <span class="term-high">High: 0</span> | <span class="term-critical">Critical: 0</span></div>
 <div class="term-line">Average Health Score: <span class="term-low">98/100</span></div>
 <div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
-<div class="term-line term-pass-bold">✔ POLICY PASSED: All Python dependencies satisfy maintenance criteria.</div>
+<div class="term-line term-pass-bold">✓ POLICY PASSED: All Python dependencies satisfy maintenance criteria.</div>
 `,
 
   'scan-rust': `
@@ -265,7 +265,7 @@ const terminalOutputs = {
 <div class="term-line">Health Overview: <span class="term-low">Healthy: 12</span> | <span class="term-medium">Medium: 0</span> | <span class="term-high">High: 0</span> | <span class="term-critical">Critical: 0</span></div>
 <div class="term-line">Average Health Score: <span class="term-low">99/100</span></div>
 <div class="term-line term-dim">──────────────────────────────────────────────────────────────────────</div>
-<div class="term-line term-pass-bold">✔ POLICY PASSED: Rust crates verified active & compliant with current MSRV.</div>
+<div class="term-line term-pass-bold">✓ POLICY PASSED: Rust crates verified active & compliant with current MSRV.</div>
 `,
 
   'analyze-fastapi': `
@@ -501,7 +501,7 @@ function updateCalculator() {
   }
 
   if (calcMaturePill) {
-    calcMaturePill.style.display = isMatureStable ? 'block' : 'none';
+    calcMaturePill.style.display = isMatureStable ? 'inline-flex' : 'none';
   }
 
   if (calcEvidenceList) {
