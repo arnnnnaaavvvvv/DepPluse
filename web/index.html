@@ -500,7 +500,12 @@
         <div class="calculator-grid">
           <!-- Controls Panel -->
           <div class="calc-controls glass-panel">
-            <h3 class="calc-panel-title">Observed Package Signals</h3>
+            <div class="calc-panel-header">
+              <h3 class="calc-panel-title">Observed Package Signals</h3>
+              <p class="calc-panel-desc">
+                Adjust signals to simulate real-world registry telemetry
+              </p>
+            </div>
 
             <div class="control-group">
               <label class="control-label" for="param-age"
@@ -594,32 +599,86 @@
           <!-- Score Result Display -->
           <div class="calc-results glass-panel">
             <div class="score-display-card">
-              <div class="score-circle" id="calc-score-circle">
-                <span class="score-number" id="calc-score-val">100</span>
-                <span class="score-max">/ 100</span>
-              </div>
-              <div class="score-meta">
-                <span class="risk-badge badge-low" id="calc-risk-badge">Low Maintenance Risk</span>
-                <div class="mature-badge" id="calc-mature-pill">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
+              <div class="score-meter-wrap" id="calc-score-circle">
+                <svg class="score-meter-svg" viewBox="0 0 100 100" width="96" height="96">
+                  <circle
+                    class="score-meter-bg"
+                    cx="50"
+                    cy="50"
+                    r="40"
                     fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
+                    stroke-width="6"
+                  />
+                  <circle
+                    class="score-meter-arc"
+                    id="calc-meter-arc"
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    fill="none"
+                    stroke-width="6"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <span>Verified Mature-Stable Package</span>
+                    stroke-dasharray="251.32"
+                    stroke-dashoffset="0"
+                  />
+                </svg>
+                <div class="score-meter-inner">
+                  <span class="score-number" id="calc-score-val">100</span>
+                  <span class="score-max">/ 100</span>
+                </div>
+              </div>
+
+              <div class="score-meta">
+                <div class="risk-badge-wrapper">
+                  <div class="risk-badge badge-low" id="calc-risk-badge">
+                    <span class="risk-dot"></span>
+                    <span class="risk-text" id="calc-risk-text">Low Maintenance Risk</span>
+                  </div>
+                  <div class="mature-badge" id="calc-mature-pill">
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                      <path d="m9 12 2 2 4-4" />
+                    </svg>
+                    <span>Verified Mature-Stable</span>
+                  </div>
+                </div>
+                <div class="score-guarantee">
+                  <span class="guarantee-icon">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="16" x2="12" y2="12" />
+                      <line x1="12" y1="8" x2="12.01" y2="8" />
+                    </svg>
+                  </span>
+                  <span>Deterministic evaluation • 0 uncalibrated deductions</span>
                 </div>
               </div>
             </div>
 
             <div class="calc-breakdown">
-              <h4 class="breakdown-title">Auditable Evidence Calculation</h4>
+              <div class="breakdown-header">
+                <div class="breakdown-title-wrap">
+                  <h4 class="breakdown-title">Auditable Evidence Calculation</h4>
+                  <p class="breakdown-subtitle">Real-time signal decomposition and fatal caps</p>
+                </div>
+                <span class="breakdown-count" id="calc-signal-count">3 Signals Evaluated</span>
+              </div>
               <ul class="evidence-list" id="calc-evidence-list">
                 <!-- Injected dynamically by JS -->
               </ul>

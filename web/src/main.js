@@ -324,6 +324,8 @@ const calcRiskBadge = document.getElementById('calc-risk-badge');
 const calcMaturePill = document.getElementById('calc-mature-pill');
 const calcEvidenceList = document.getElementById('calc-evidence-list');
 const calcScoreCircle = document.getElementById('calc-score-circle');
+const calcMeterArc = document.getElementById('calc-meter-arc');
+const calcSignalCount = document.getElementById('calc-signal-count');
 
 function updateCalculator() {
   const ageYears = Number(paramAge?.value || 5);
@@ -361,7 +363,7 @@ function updateCalculator() {
       evidence.push({
         text: `Mature-Stable Waiver Applied: Inactivity over ${recencyDays} days incurs 0 penalty.`,
         pts: '0 pts',
-        type: 'pts-bonus',
+        type: 'pts-neutral',
       });
     }
   } else {
@@ -494,26 +496,54 @@ function updateCalculator() {
   }
 
   if (calcScoreVal) calcScoreVal.textContent = String(finalScore);
-  if (calcScoreCircle) calcScoreCircle.style.borderColor = circleColor;
+
+  const circumference = 251.32;
+  const strokeOffset = circumference - (circumference * finalScore) / 100;
+  if (calcMeterArc) {
+    calcMeterArc.style.strokeDashoffset = String(strokeOffset);
+    calcMeterArc.style.stroke = circleColor;
+  }
+  if (calcScoreCircle) {
+    calcScoreCircle.style.borderColor = circleColor;
+  }
+
   if (calcRiskBadge) {
     calcRiskBadge.className = `risk-badge ${riskClass}`;
-    calcRiskBadge.textContent = riskText;
+    calcRiskBadge.innerHTML = `<span class="risk-dot"></span><span class="risk-text">${riskText}</span>`;
   }
 
   if (calcMaturePill) {
     calcMaturePill.style.display = isMatureStable ? 'inline-flex' : 'none';
   }
 
+  if (calcSignalCount) {
+    calcSignalCount.textContent = `${evidence.length} Signals Evaluated`;
+  }
+
   if (calcEvidenceList) {
     calcEvidenceList.innerHTML = evidence
-      .map(
-        e => `
-      <li class="evidence-item">
-        <span class="evidence-text">${e.text}</span>
-        <span class="evidence-pts ${e.type}">${e.pts}</span>
-      </li>
-    `,
-      )
+      .map(e => {
+        let iconSvg = '';
+        if (e.type === 'pts-bonus') {
+          iconSvg = `<svg class="evidence-icon-svg icon-positive" width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>`;
+        } else if (e.type === 'pts-neutral') {
+          iconSvg = `<svg class="evidence-icon-svg icon-neutral" width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>`;
+        } else if (e.type === 'pts-penalty') {
+          iconSvg = `<svg class="evidence-icon-svg icon-penalty" width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>`;
+        } else {
+          iconSvg = `<svg class="evidence-icon-svg icon-cap" width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>`;
+        }
+
+        return `
+          <li class="evidence-item">
+            <div class="evidence-main">
+              <span class="evidence-icon">${iconSvg}</span>
+              <span class="evidence-text">${e.text}</span>
+            </div>
+            <span class="evidence-pts ${e.type}">${e.pts}</span>
+          </li>
+        `;
+      })
       .join('');
   }
 }
